@@ -3,6 +3,7 @@
 // order: sections in the order they are chanted. Vēdam has no repeats.
 window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};
 window.SLOKAM_TEXTS["bhusuktam"] = {
+  revision: 2,
   verseWord: "", verseCount: 4, labels: {},
   order: [1, 2, 3, 4],
   lines: [
@@ -24,8 +25,7 @@ window.SLOKAM_TEXTS["bhusuktam"] = {
     {"v": 2, "text": "सद॑ने स॒त्याय॑ने सीद ।"},
     {"v": 2, "text": "स॒मु॒द्रव॑ती सावि॒त्री हनो॑ दे॒वी म॒ह्यङ्गी᳚ ।"},
     {"v": 2, "text": "भूसूक्तम् ।"},
-    {"v": 2, "text": "म॒होधर॑णी म॒होध्य॑तिष्ठाः शृ॒ङ्गे शृ॑ङ्गे य॒ज्ञे य॑ज्ञे ।"},
-    {"v": 2, "text": "विभी॒षिणी᳚ ।"},
+    {"v": 2, "text": "म॒होधर॑णी म॒होध्य॑तिष्ठाः शृ॒ङ्गे शृ॑ङ्गे य॒ज्ञे य॑ज्ञे विभी॒षिणी᳚ ।"},
     {"v": 2, "text": "इन्द्र॑पत्नी व्या॒पिनी॑ सु॒रस॑रिदि॒ह ।"},
     {"v": 2, "text": "वा॒यु॒मती॑ जल॒शय॑नी श्रि॒यंधा॒ राजा॑ स॒त्यन्धो॒ परि॑मेदिनी ।"},
     {"v": 2, "text": "श्वो॒परि॑धत्तं गाय ।"},
