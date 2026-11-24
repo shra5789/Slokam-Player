@@ -97,6 +97,18 @@ function createWindow(port) {
   win.setAlwaysOnTop(true, 'screen-saver'); // stay above normal windows, including maximised ones
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
+  // No page zoom: Ctrl − / Ctrl + / Ctrl 0 and Ctrl + mouse wheel would shrink the lyrics, and Chromium
+  // remembers the zoom between launches. Text size is set in ⚙ instead. Zoom is also reset on every
+  // load, which undoes any zoom left over from an earlier version.
+  const wc = win.webContents;
+  const resetZoom = () => { wc.setZoomLevel(0); wc.setZoomFactor(1); };
+  wc.on('did-finish-load', resetZoom);
+  wc.on('zoom-changed', resetZoom);
+  wc.setVisualZoomLevelLimits(1, 1).catch(() => {});
+  wc.on('before-input-event', (e, input) => {
+    if ((input.control || input.meta) && ['-', '_', '=', '+', '0', 'Add', 'Subtract'].includes(input.key)) e.preventDefault();
+  });
+
   win.loadURL(`http://127.0.0.1:${port}/index.html`);
   win.once('ready-to-show', () => win.show());
 
@@ -292,6 +304,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(async () => {
     if (process.platform === 'win32') app.setAppUserModelId('com.slokamplayer.app');
     loadSettings();
+    Menu.setApplicationMenu(null);   // drop the default menu and its Ctrl −/+/0 zoom and Ctrl R reload shortcuts
     const port = await startServer();
     createWindow(port);
     if (settings.alwaysOnTop === false) win.setAlwaysOnTop(false);
