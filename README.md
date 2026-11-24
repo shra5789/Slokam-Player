@@ -22,7 +22,7 @@ Available now:
 | 8 | **அமலனாதிபிரான்** · amalanādipirān | 〃 | with taniyans |
 | 9 | **கண்ணிநுண் சிறுத்தாம்பு** · kaṇṇinuṇ śiṟuttāmbu | 〃 | with taniyans |
 | 10 | **இராமாநுச நூற்றந்தாதி** · irāmānuśa nūṟṟandādi | [Maalola Kannan & N S Ranganathan](https://youtu.be/-PkD67xhHf0) | with taniyans |
-| 11 | **வாரணமாயிரம்** · vāraṇamāyiram | [YouTube](https://youtu.be/uKn6jYwQLrA), only 0:00–0:20 and 21:37–25:06 | Nācciyār Tirumoḻi 6, with its taniyan; numbered 1–11 |
+| 11 | **வாரணமாயிரம்** · vāraṇamāyiram | [YouTube](https://youtu.be/uKn6jYwQLrA), only 0:00–0:21 and 21:37–25:06 | Nācciyār Tirumoḻi 6, with its taniyan; numbered 1–11 |
 | 12 | **திருவெழுகூற்றிருக்கை** · tiruvezukūṟṟirukkai | [YouTube](https://youtu.be/5MPUwn8JafE) | one long pāsuram chanted twice, then the unnumbered closing verse |
 | 16 | **அடைக்கலப்பத்து** · aḍaikkalappattu | [YouTube](https://youtu.be/0v2QxDExoAU) | the pāsurams (the recording skips the taniyan) |
 | 17 | **மும்மணிக்கோவை** · mummaṇikkōvai | [Thiruvayindhai K. Malolakannan & N. S. Ranganathan](https://youtu.be/_S8ixInldNY) | the ten pāsurams |
@@ -66,8 +66,8 @@ Every recording is Maalola Kannan's: Amutham Music's series (Desika Stotram, Nit
 Noottrandhadi, Panchasuktham) where there is one, otherwise his Achyuthapaaduka channel or GSPK. Still waiting for
 a recording: nīrāṭṭam (4), aṅgaṇ ñālam (13), kāśaiyāḍai (14) and vāṇilā muṟuval (15).
 
-A slokam can use **just parts of a longer recording**: Vāraṇamāyiram plays the taniyan (0:00–0:20) and then
-21:37–25:06 of a video of all of Nācciyār Tirumoḻi, as one 3:49 track (`segments` in `src/library.js`).
+A slokam can use **just parts of a longer recording**: Vāraṇamāyiram plays the taniyan (0:00–0:21) and then
+21:37–25:06 of a video of all of Nācciyār Tirumoḻi, as one 3:50 track (`segments` in `src/library.js`).
 Pāsurams taken from a larger work are numbered from 1 (Vāraṇamāyiram's 6.1–6.11 show as 1–11).
 
 ## Features
