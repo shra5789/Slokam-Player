@@ -172,8 +172,8 @@ def dev(t):
     for a, b in [('ṃ', 'ṁ'), ('ṛ', 'r̥'), ('ṝ', 'r̥̄'), ('ḻ', 'ḷ'), ('’', "'")]:
         t = t.replace(a, b)
     # ḷ is normally the consonant ळ (maṅgaḷam), but between two consonants it is the vowel ḷ:
-    # kḷpta is written क्लृप्त, not क्ळ्प्त
-    t = re.sub(r'(?<=[kgcjṭḍtdpbmyrvśṣsh])ḷ(?=[kgcjṭḍtdpbmnyrlvśṣsh])', 'lr̥', t)
+    # kḷpta is कॢप्त, not क्ळ्प्त
+    t = re.sub(r'(?<=[kgcjṭḍtdpbmyrvśṣsh])ḷ(?=[kgcjṭḍtdpbmnyrlvśṣsh])', 'l̥', t)
     return sanscript.transliterate(t, sanscript.ISO, sanscript.DEVANAGARI)
 
 out = [{'v': u['v'], 'text': (dev(u['text']) + (' ' + u['end'] if u['end'] else '')).strip()} for u in units]
