@@ -3,8 +3,10 @@
 // order: in the order they are chanted (the first and last ślōkas are said twice).
 window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};
 window.SLOKAM_TEXTS["abhitistava"] = {
+  revision: 2,
+  keepTimingsBefore: { 1: 28 },   // revision: ślōka — older timings stay right before this ślōka
   verseWord: "श्लोकः", verseCount: 29, labels: {"0": "तनियन्", "30": "तनियन्"},
-  order: [0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 30],
+  order: [0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 28, 29, 29, 30],
   lines: [
     {"v": 0, "text": "श्रीमान् वेङ्कटनाथार्यः कवितार्किककेसरी ।"},
     {"v": 0, "text": "वेदान्ताचार्यवर्यो मे सन्निधत्तां सदा हृदि ॥"},
