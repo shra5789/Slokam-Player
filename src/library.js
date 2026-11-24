@@ -16,7 +16,11 @@ window.SLOKAM_LIBRARY = [
       { n: 8, iast: 'amalanādipirān', native: 'அமலனாதிபிரான்', text: 'amalanadipiran', youtube: '84YaY3c6Z_g', duration: 261 },
       { n: 9, iast: 'kaṇṇinuṇ śiṟuttāmbu', native: 'கண்ணிநுண் சிறுத்தாம்பு', text: 'kanninun', youtube: 'ZidX8qMmfUs', duration: 225 },
       { n: 10, iast: 'irāmānuśa nūṟṟandādi', native: 'இராமாநுச நூற்றந்தாதி', text: 'ramanujanutrandadi', youtube: '-PkD67xhHf0' },
-      { n: 11, iast: 'vāraṇamāyiram', native: 'வாரணமாயிரம்' },
+      {
+        n: 11, iast: 'vāraṇamāyiram', native: 'வாரணமாயிரம்', text: 'varanamayiram', youtube: 'uKn6jYwQLrA',
+        // the video is the whole of Nācciyār Tirumoḻi: its taniyan (0:00–0:20) and Vāraṇamāyiram (21:37–25:06)
+        segments: [[0, 20], [1297, 1506]], duration: 229,
+      },
       { n: 12, iast: 'tiruvezukūṟṟirukkai', native: 'திருவெழுகூற்றிருக்கை', text: 'tiruvezukurrirukkai', youtube: '5MPUwn8JafE' },
       { n: 13, iast: 'aṅgaṇ ñālam', native: 'அங்கண் ஞாலம்' },
       { n: 14, iast: 'kāśaiyāḍai', native: 'காசையாடை' },

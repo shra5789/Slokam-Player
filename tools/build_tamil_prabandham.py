@@ -23,6 +23,8 @@ ap.add_argument('--taniyans', action='store_true', help='with --section: put the
 ap.add_argument('--extra-taniyans', metavar='TEXT:FIRST-LAST',
                 help='put numbered taniyans from another repaired text first, e.g. '
                      'naalaayirattaniyangal_vad.txt:1-5 (chanted before the work\'s own taniyans)')
+ap.add_argument('--taniyans-file', metavar='TEXT',
+                help='with --section: take the taniyans from this separate repaired text (e.g. nttaniyan.txt)')
 ap.add_argument('--desika', action='store_true',
                 help='a Dēśika prabandham PDF: no "தனியன்கள்" heading; everything before pāsuram 1 is taniyans')
 ap.add_argument('--drop-taniyans', metavar='N,N',
@@ -77,6 +79,14 @@ if args.section:
     if args.taniyans:
         t = next(k for k, l in enumerate(raw) if l == 'தனியன்கள்')
         taniyan_blocks = taniyans_after(t)
+    if args.taniyans_file:
+        # the work's taniyans are in their own PDF (Nācciyār Tirumoḻi's nttaniyan.pdf)
+        saved_raw, saved_titles = raw, titles
+        raw = [l.strip() for l in open(args.taniyans_file, encoding='utf-8').read().splitlines()]
+        titles = saved_titles | {l for l in raw if 'தனியன்கள்' in l and l != 'தனியன்கள்'}
+        t = next(k for k, l in enumerate(raw) if l == 'தனியன்கள்')
+        taniyan_blocks = taniyans_after(t)
+        raw, titles = saved_raw, saved_titles
 elif args.desika:
     doc_title = next(l for l in raw if l and not JUNK.match(l))
     clean_raw = [l for l in raw if l and not JUNK.match(l) and l not in titles and l != doc_title]

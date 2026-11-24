@@ -134,3 +134,57 @@ class YouTubePlayer {
   seek(t) { if (this._ready) { this.p.seekTo(Math.max(0, t), true); this._lastT = t; this._lastAt = performance.now(); } }
   destroy() { try { this.p.destroy(); } catch {} }
 }
+
+class SegmentPlayer {
+  // Plays only some parts of a longer recording, back to back, as if they were one track:
+  // e.g. Vāraṇamāyiram's taniyan (0:00–0:20) and pāsurams (21:37–25:06) out of the whole of
+  // Nācciyār Tirumoḻi. `segs` is [[start, end], …] in seconds of the real recording. Time, length,
+  // seeking and looping are all in the joined-up ("virtual") time.
+  constructor(inner, segs) {
+    this.inner = inner; this.kind = inner.kind;
+    this.segs = segs.map(([a, b]) => ({ a, b }));
+    let off = 0;
+    for (const s of this.segs) { s.off = off; off += s.b - s.a; }
+    this._dur = off; this._ended = false; this.loop = true; this.onState = () => {};
+    inner.loop = false;
+    inner.onState = () => this.onState();
+    inner.onLoop = null;
+  }
+  _segAt(r) { // the part a real time falls in (or the next one, if it's in a gap)
+    for (let i = 0; i < this.segs.length; i++) if (r < this.segs[i].b) return i;
+    return this.segs.length;
+  }
+  time() {
+    if (this._ended) return this._dur;
+    const r = this.inner.time();
+    const i = this._segAt(r);
+    if (i >= this.segs.length) {
+      // past the end of the last part: the "track" is over
+      if (this.inner.playing()) {
+        if (this.loop) { this.seek(0); this.onLoop && this.onLoop(); return 0; }
+        this.inner.pause(); this._ended = true; this.onState();
+      }
+      return this._dur;
+    }
+    const s = this.segs[i];
+    if (r < s.a - 0.25) {
+      // in a gap before this part (or before the first): jump to where it starts
+      if (this.inner.playing()) this.inner.seek(s.a);
+      return s.off;
+    }
+    return s.off + Math.max(0, r - s.a);
+  }
+  duration() { return this._dur; }
+  playing() { return !this._ended && this.inner.playing(); }
+  play() { if (this._ended) { this._ended = false; this.seek(0); } this.inner.play(); }
+  pause() { this.inner.pause(); }
+  seek(v) {
+    v = Math.max(0, Math.min(v, this._dur - 0.05));
+    this._ended = false;
+    const s = this.segs.find((x) => v < x.off + (x.b - x.a)) || this.segs[this.segs.length - 1];
+    this.inner.seek(s.a + (v - s.off));
+  }
+  adPlaying() { return this.inner.adPlaying ? this.inner.adPlaying() : false; }
+  show(on) { if (this.inner.show) this.inner.show(on); }
+  destroy() { this.inner.destroy && this.inner.destroy(); }
+}

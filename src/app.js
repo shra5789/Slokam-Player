@@ -559,6 +559,8 @@
   function onLoop() { entry = -2; userScrollUntil = 0; }
   let autoplay = false; // start the next player as soon as it's ready (after ⏮ / ⏭ while playing)
   function adopt(p) {
+    // only parts of a longer recording (Vāraṇamāyiram out of all of Nācciyār Tirumoḻi)
+    if (item.segments) p = new SegmentPlayer(p, item.segments);
     player = p;
     p.onState = updatePlayButtons; p.onLoop = onLoop; p.loop = !!S.loop && !sync;
     if (autoplay) { autoplay = false; p.play(); }
@@ -573,7 +575,8 @@
     updatePlayButtons();
   }
   function useClock(reason) {
-    adopt(new ClockPlayer(item.duration || 1800));
+    // with parts of a longer recording, the stopwatch has to reach the end of the last part
+    adopt(new ClockPlayer(item.segments ? Math.max(...item.segments.map((x) => x[1])) + 5 : item.duration || 1800));
     document.body.classList.add('clock-mode');
     toast(reason + ' Using a stopwatch instead: press ▶ at the same moment you start the video.', 9000);
   }
