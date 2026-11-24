@@ -187,6 +187,7 @@ The text generators in `tools/` apply these rules when they build each slokam's 
     `tools/build_tamil_prabandham.py` builds the file, either for a whole work or for one decade of a
     larger one (`--section 2.7`), optionally with the work's taniyans (`--taniyans`).
     `tools/build_mummanikkovai.py` builds Mummanikkovai, whose taniyan and closing *சீரார் தூப்புல் …* aren't in its recording.
+    Both split a verse into lines at each ⋆, as the PDFs mark them, rather than where the PDF wraps its printed lines.
   - Vēdam: `tools/build_vedam.py` builds a sūktam from the romanised edition, keeping the Taittirīya svara marks
     (anudātta ॒, svarita ॑, dīrgha svarita ᳚). The app bundles Noto Sans Devanagari (`src/fonts/`, SIL Open Font
     License) because it draws those marks, which Windows' own Devanagari font may not.

@@ -36,6 +36,9 @@ ap.add_argument('--andadi', action='store_true',
 ap.add_argument('--join', metavar='A,B',
                 help='show verses A and B (as the PDF numbers them) as one verse A, renumbering the ones after; '
                      'the playback order is kept (Tirupallāṇḍu 1,2)')
+ap.add_argument('--keep-timings-before', metavar='REV:VERSE',
+                help='with a new --revision: timings synced to revision REV stay right up to pāsuram VERSE '
+                     '(the lines before it are unchanged), so only the rest needs syncing again')
 ap.add_argument('--revision', type=int, default=1,
                 help='bump when the lines change, so the app drops timings synced to the old lines')
 args = ap.parse_args()
@@ -114,8 +117,17 @@ out, repeated, verse, buf = [], set(), 1, []
 reading = []          # verse ids in the order they're printed (and chanted)
 extras = []           # verses the PDF doesn't number: chanted once, labelled without a number
 
+def star_lines(lines_):
+    """A Tamil verse's lines end at each ⋆, not where the PDF happens to wrap them (Tiruvezukūṟṟirukkai's
+    "… அரவோடு ⋆ ஆறு பொதி சடையோன் …" is printed across a line break). Blocks without any ⋆, such as the
+    Sanskrit taniyans, keep the PDF's lines."""
+    lines_ = [re.sub(r'॥\s*॥\s*[\d.]+\s*॥\s*॥\s*$', '', l) for l in lines_]
+    if not any('⋆' in l for l in lines_):
+        return lines_
+    return [x.strip() for x in re.split(r'⋆+', ' '.join(lines_)) if x.strip()]
+
 def emit(lines_, v):
-    for k, b in enumerate(lines_):
+    for k, b in enumerate(star_lines(lines_)):
         text = re.sub(r'॥.*$', '', b)
         text = re.sub(r'[⋆‡]', '', text)
         o = {'v': v, 'text': re.sub(r'\s+', ' ', text).strip()}
@@ -164,7 +176,7 @@ if args.drop_taniyans:
 
 lines = []
 for n, block in enumerate(taniyan_blocks, 1):
-    for l in block:
+    for l in star_lines(block):
         text = re.sub(r'\s+', ' ', re.sub(r'[⋆‡॥]', '', l)).strip()
         text = re.sub(r'\s+-$', '-', text)  # a compound running on into the next line keeps its hyphen attached
         for a, b in {'பாரொன்ற ச்சொன்ன': 'பாரொன்றச் சொன்ன', 'வானேற ப்போமளவும்': 'வானேறப் போமளவும்'}.items():
@@ -206,6 +218,9 @@ print('// pāsurams marked ‡ in the PDF are said twice; a line with rep: 1 is 
 print('window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};')
 print(f'window.SLOKAM_TEXTS[{json.dumps(args.id)}] = {{')
 print(f'  revision: {args.revision},')
+if args.keep_timings_before:
+    r_, v_ = args.keep_timings_before.split(':')
+    print('  keepTimingsBefore: { %s: %s },   // revision: pāsuram — older timings stay right before this pāsuram' % (r_, v_))
 print(f'  verseWord: "பாசுரம்", verseCount: {numbered_count}, labels: {json.dumps(labels, ensure_ascii=False)},')
 if num:
     print(f'  num: {json.dumps(num)},   // number shown for a verse, where it differs from v')

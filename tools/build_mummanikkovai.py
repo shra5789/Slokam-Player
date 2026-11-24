@@ -22,21 +22,30 @@ end = next(k for k, l in enumerate(lines) if l.startswith('அடிவரவு
 
 out, verse = [], 0
 repeated = set()  # pāsurams whose first line starts with ‡ are chanted twice
+def flush(buf, verse):
+    # a line ends at each ⋆, not where the PDF happens to wrap it
+    buf = [re.sub(r'॥.*$', '', l) for l in buf]
+    parts = re.split(r'⋆+', ' '.join(buf)) if any('⋆' in l for l in buf) else buf
+    for x in parts:
+        text = re.sub(r'\s+', ' ', re.sub(r'[⋆‡₃]', '', x)).strip()
+        if text:
+            out.append({'v': verse, 'text': text})
+
+buf = []
 for l in lines[i:end]:
     if not l or SKIP.match(l):
         continue
     m = re.search(r'॥\s*॥\s*(\d+)\s*॥\s*॥', l)
-    text = re.sub(r'॥.*$', '', l)
-    if l.startswith('‡'):
+    if l.startswith('‡') and not buf:
         repeated.add(verse)
-    text = re.sub(r'[⋆‡₃]', '', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    if text:
-        out.append({'v': verse, 'text': text})
+    buf.append(l)
     if m:  # "॥ n ॥" closes verse n; following lines belong to verse n+1
+        flush(buf, verse); buf = []
         verse = int(m.group(1)) + 1
-    elif verse == 0 and text.startswith('வானேற'):
+    elif verse == 0 and re.sub(r'[⋆‡₃]', '', l).strip().startswith('வானேற'):
+        flush(buf, verse); buf = []
         verse = 1
+flush(buf, verse)
 out = [o for o in out if o['v'] != 0]  # drop the taniyan
 
 # In the PDF, a pāsuram that starts with ‡ is repeated when chanted, so the recording

@@ -134,7 +134,7 @@
           rev: revision(), synced: wasDone, full: false,
         });
         stale = false; keptNotice = true;
-        setTimeout(() => toast(`The order of ${item.iast} changed from ${T.verseWord} ${keepBefore} on. Your timings before that are kept — press R to sync the rest.`, 9000), 600);
+        setTimeout(() => toast(`${item.iast} was updated from ${T.verseWord} ${keepBefore} on. Your timings before that are kept — press R to sync the rest.`, 9000), 600);
       }
     }
     if (stale) {
