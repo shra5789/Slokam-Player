@@ -12,7 +12,11 @@ window.SLOKAM_LIBRARY = [
         segments: [[0, 304]], duration: 304,   // the recitation ends at 5:04; the rest of the video isn't played
       },
       { n: 3, iast: 'tiruppāvai', native: 'திருப்பாவை', text: 'tiruppavai', youtube: 'tqrJueDJ1II' },
-      { n: 4, iast: 'nīrāṭṭam', native: 'நீராட்டம்' },
+      {
+        n: 4, iast: 'nīrāṭṭam', native: 'நீராட்டம்', text: 'nirattam', youtube: 'rVmLQ4pdpy4',
+        // Periyāḻvār Tirumoḻi 2.4, out of a longer video (14:30–18:26)
+        segments: [[870, 1106]], duration: 236,
+      },
       { n: 5, iast: 'pūccūṭṭal', native: 'பூச்சூட்டல்', text: 'puccuttal', youtube: 'NiM4ICBSkgw', duration: 193 },
       { n: 6, iast: 'kāppiḍal', native: 'காப்பிடல்', text: 'kappidal', youtube: 'cDV-Mo8n_kI', duration: 211 },
       { n: 7, iast: 'śenniyōṅgu', native: 'சென்னியோங்கு', text: 'senniyongu', youtube: 'DsbIQt550N8', duration: 250 },
