@@ -235,6 +235,9 @@ body.fullscreen.show-video .video-box { top: 76px; right: 28px; width: 320px; he
 .lib-item.current { background: rgba(240, 179, 90, .16); }
 .lib-item.soon { opacity: .38; cursor: default; }
 .check.sub-option { padding-left: 22px; }
+.sheet-group { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 2px; flex-shrink: 0; padding: 10px 10px 10px; border-radius: 8px;
+               background: rgba(var(--fg), .05); border: 1px solid rgba(var(--fg), .1); }
+.group-title { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
 .lib-item.off { opacity: .38; cursor: not-allowed; }
 .lib-n { min-width: 18px; font-size: 10px; opacity: .55; text-align: right; font-variant-numeric: tabular-nums; }
 .lib-names { flex: 1; min-width: 0; display: flex; flex-direction: column; }
