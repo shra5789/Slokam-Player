@@ -14,6 +14,9 @@
     ITEMS[it.id] = it;
   }));
   const DEFAULT_ID = 'mummanikkovai';
+  // Anadhyayanam mode: the Divya Prabandhams aren't recited then, so they can't be played
+  const isOff = (it) => !!S.anadhyayanam && it.cat.id === 'divya';
+  const canPlay = (it) => !!it && it.available && !isOff(it);
 
   // settings live in the Electron main process; fall back to localStorage when opened in a plain browser
   const store = window.widget || {
@@ -389,7 +392,7 @@
   }
   function openSheet() {
     closeLibrary();
-    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop;
+    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam;
     updateTimingNote();
     $('sheet').classList.remove('hidden');
   }
@@ -413,15 +416,16 @@
       sec.appendChild(h);
       cat.items.forEach((it) => {
         const b = document.createElement('button');
-        b.className = 'lib-item' + (it.available ? '' : ' soon') + (item && it.id === item.id ? ' current' : '');
-        b.disabled = !it.available;
+        b.className = 'lib-item' + (it.available ? '' : ' soon') + (isOff(it) ? ' off' : '') + (item && it.id === item.id ? ' current' : '');
+        b.disabled = !canPlay(it);
+        if (isOff(it)) b.title = 'Anadhyayanam mode is on (⚙ Settings)';
         const [m, s] = [it.native, it.iast];
         b.innerHTML = '<span class="lib-n"></span><span class="lib-names"><span class="lib-main"></span><span class="lib-sub"></span></span><span class="lib-tag"></span>';
         b.querySelector('.lib-n').textContent = it.n;
         b.querySelector('.lib-main').textContent = m;
         b.querySelector('.lib-sub').textContent = s;
         b.querySelector('.lib-main').lang = cat.lang;
-        b.querySelector('.lib-tag').textContent = it.available ? (item && it.id === item.id ? '♪' : '') : 'soon';
+        b.querySelector('.lib-tag').textContent = !it.available ? 'soon' : isOff(it) ? '' : (item && it.id === item.id ? '♪' : '');
         const st = isSynced(it);
         if (st) {
           const ok = document.createElement('span');
@@ -429,7 +433,7 @@
           ok.title = st === 'full' ? 'Timings synced' : 'Partly synced: open it and press R (or ⚙ → Resume sync) to carry on';
           b.querySelector('.lib-tag').before(ok);
         }
-        if (it.available) b.onclick = () => { closeLibrary(); selectSlokam(it.id, { play: true }); };
+        if (canPlay(it)) b.onclick = () => { closeLibrary(); selectSlokam(it.id, { play: true }); };
         sec.appendChild(b);
       });
     });
@@ -488,6 +492,16 @@
     $('optFont').oninput = (e) => { save({ font: +e.target.value }); applyLook(); };
     $('optVideo').onchange = (e) => { save({ video: e.target.checked }); applyLook(); };
     $('optLoop').onchange = (e) => { save({ loop: e.target.checked }); applyLook(); };
+    $('optAnadhyayanam').onchange = (e) => {
+      save({ anadhyayanam: e.target.checked }); upcoming = null;
+      if (isOff(item)) {
+        // the Divya Prabandham that's open now can't play: move on to the next slokam that can
+        const next = step(1);
+        if (player) player.pause();
+        selectSlokam(next.id);
+        toast(`Anadhyayanam mode: the Divya Prabandhams are off, so ${next.iast} is up instead.`, 5000);
+      } else toast(e.target.checked ? 'Anadhyayanam mode: the Divya Prabandhams won’t play.' : 'Anadhyayanam mode off.', 3000);
+    };
     $('offMinus').onclick = () => { saveMine({ offset: Math.round((offset() - 0.5) * 10) / 10 }); applyLook(); };
     $('offPlus').onclick = () => { saveMine({ offset: Math.round((offset() + 0.5) * 10) / 10 }); applyLook(); };
     $('btnSync').onclick = () => startSync(false);
@@ -623,31 +637,40 @@
 
   // ---------- choosing a slokam ----------
   // ⏮ / ⏭ step through the playable slokams in menu order, wrapping around at the ends
-  const PLAYABLE = Object.values(ITEMS).filter((it) => it.available).sort((a, b) => a.n - b.n);
+  const ALL_PLAYABLE = Object.values(ITEMS).filter((it) => it.available).sort((a, b) => a.n - b.n);
+  // what ⏮ / ⏭ / shuffle step through: the playable slokams, less the Divya Prabandhams in Anadhyayanam mode
+  const playable = () => ALL_PLAYABLE.filter((it) => !isOff(it));
+  // the position of the current slokam in that list (or where it would be, if it's left out)
+  const posOf = (list, it) => { const k = list.findIndex((x) => x.id === it.id); return k >= 0 ? k : list.findIndex((x) => x.n > it.n) - 0.5; };
   // With shuffle on, "next" is a random other slokam, and "previous" walks back through the ones played.
   const history = [];
+  const pruneHistory = () => { for (let k = history.length - 1; k >= 0; k--) if (!canPlay(ITEMS[history[k]])) history.splice(k, 1); };
   // what ⏭ (or the end of a slokam, with looping off) will play next. With shuffle on it's picked
   // ahead of time, so the preview above ⏭ shows what will really play.
   let upcoming = null;
+  // the slokam d places before or after the current one, wrapping around at the ends
+  function step(d) {
+    const list = playable(), k = posOf(list, item), L = list.length;
+    const j = Number.isInteger(k) ? k + d : (d > 0 ? Math.ceil(k) : Math.floor(k));
+    return list[((j % L) + L) % L];
+  }
   function upNext() {
     if (S.shuffle) {
-      if (!upcoming || upcoming.id === item.id) {
-        const others = PLAYABLE.filter((it) => it.id !== item.id);
+      if (!upcoming || upcoming.id === item.id || isOff(upcoming)) {
+        const others = playable().filter((it) => it.id !== item.id);
         upcoming = others[Math.floor(Math.random() * others.length)];
       }
       return upcoming;
     }
-    const k = PLAYABLE.findIndex((it) => it.id === item.id);
-    return PLAYABLE[(k + 1) % PLAYABLE.length];
+    return step(1);
   }
   // what ⏮ will do: restart this slokam when more than 3 s in, otherwise go back to the previous one
   function showPrevPreview() {
     let label, it;
     if (player && player.time() > 3) { label = 'Back to the start'; it = item; }
-    else if (S.shuffle && history.length) { label = 'Previous (shuffle)'; it = ITEMS[history[history.length - 1]]; }
+    else if (S.shuffle && (pruneHistory(), history.length)) { label = 'Previous (shuffle)'; it = ITEMS[history[history.length - 1]]; }
     else {
-      const k = PLAYABLE.findIndex((x) => x.id === item.id);
-      label = 'Previous'; it = PLAYABLE[(k - 1 + PLAYABLE.length) % PLAYABLE.length];
+      label = 'Previous'; it = step(-1);
     }
     $('prevLabel').textContent = label;
     $('prevName').textContent = it.native; $('prevName').lang = it.lang;
@@ -668,11 +691,10 @@
     if (S.shuffle && d > 0) {
       next = upNext();
       upcoming = null;
-    } else if (S.shuffle && d < 0 && history.length) {
+    } else if (S.shuffle && d < 0 && (pruneHistory(), history.length)) {
       return selectSlokam(history.pop(), { play: keepPlaying, back: true });
     } else {
-      const k = PLAYABLE.findIndex((it) => it.id === item.id);
-      next = PLAYABLE[(k + d + PLAYABLE.length) % PLAYABLE.length];
+      next = step(d);
     }
     selectSlokam(next.id, { play: keepPlaying });
   }
@@ -689,7 +711,7 @@
 
   function selectSlokam(id, { play = false, back = false } = {}) {
     if (item && !back && id !== item.id) { history.push(item.id); if (history.length > 50) history.shift(); }
-    const it = ITEMS[id] && ITEMS[id].available ? ITEMS[id] : ITEMS[DEFAULT_ID];
+    const it = canPlay(ITEMS[id]) ? ITEMS[id] : canPlay(ITEMS[DEFAULT_ID]) ? ITEMS[DEFAULT_ID] : playable()[0];
     if (sync) finishSync(true);
     item = it; T = TEXTS[it.text];
     save({ current: it.id });
