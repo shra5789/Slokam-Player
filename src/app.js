@@ -119,6 +119,22 @@
     const m = mine();
     const has = Array.isArray(m.timings) && Array.isArray(m.seq);
     let stale = has && (m.rev || 1) !== revision();
+    // A text update that only took some lines out (a taniyan the recording doesn't recite) leaves the
+    // recording as it was: drop those lines' timings and keep all the others, pointed at the new lines.
+    const removed = stale && T.removedLines && T.removedLines[m.rev || 1];
+    if (removed && m.timings.length === m.seq.length) {
+      const [at, n] = removed;
+      const done = m.full === false ? (m.synced || 0) : m.seq.length;
+      const seq2 = [], times2 = []; let synced2 = 0;
+      m.seq.forEach((i, k) => {
+        if (i >= at && i < at + n) return;
+        seq2.push(i >= at + n ? i - n : i); times2.push(m.timings[k]);
+        if (k < done) synced2++;
+      });
+      saveMine({ seq: seq2, timings: times2, rev: revision(), synced: synced2, full: m.full });
+      stale = false; keptNotice = true;
+      setTimeout(() => toast(`Some lines that aren’t recited were taken out of ${item.iast}. Your timings for the rest are kept.`, 7000), 600);
+    }
     // A text update that only changed the order near the end can say that older timings are still
     // right up to a given verse: keep those and leave the rest to be synced (as a partial sync).
     const keepBefore = stale && T.keepTimingsBefore && T.keepTimingsBefore[m.rev || 1];

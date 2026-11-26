@@ -42,6 +42,9 @@ ap.add_argument('--join', metavar='A,B',
 ap.add_argument('--keep-timings-before', metavar='REV:VERSE',
                 help='with a new --revision: timings synced to revision REV stay right up to pāsuram VERSE '
                      '(the lines before it are unchanged), so only the rest needs syncing again')
+ap.add_argument('--removed-lines', metavar='REV:START:COUNT',
+                help='with a new --revision: the only change from revision REV is that COUNT lines from line '
+                     'index START were taken out (e.g. a taniyan the recording skips); the app keeps all other timings')
 ap.add_argument('--revision', type=int, default=1,
                 help='bump when the lines change, so the app drops timings synced to the old lines')
 args = ap.parse_args()
@@ -224,6 +227,9 @@ print('// pāsurams marked ‡ in the PDF are said twice; a line with rep: 1 is 
 print('window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};')
 print(f'window.SLOKAM_TEXTS[{json.dumps(args.id)}] = {{')
 print(f'  revision: {args.revision},')
+if args.removed_lines:
+    r_, a_, n_ = args.removed_lines.split(':')
+    print('  removedLines: { %s: [%s, %s] },   // revision: [first line index, count] taken out since then' % (r_, a_, n_))
 if args.keep_timings_before:
     r_, v_ = args.keep_timings_before.split(':')
     print('  keepTimingsBefore: { %s: %s },   // revision: pāsuram — older timings stay right before this pāsuram' % (r_, v_))
