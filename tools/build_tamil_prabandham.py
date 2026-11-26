@@ -31,6 +31,9 @@ ap.add_argument('--drop-taniyans', metavar='N,N',
                 help='leave out these taniyans (1 = the first one printed, or "all"), when the recording skips them')
 ap.add_argument('--no-repeat', metavar='N,N',
                 help='pāsurams marked ‡ that the recording nevertheless chants only once')
+ap.add_argument('--repeat', metavar='N,N',
+                help='pāsurams the recording chants twice although the PDF doesn\'t mark them ‡ '
+                     '(Periya Tirumoḻi decades: the first and the last two)')
 ap.add_argument('--andadi', action='store_true',
                 help='an andādi: pāsuram 1 is chanted once more after the last pāsuram')
 ap.add_argument('--join', metavar='A,B',
@@ -179,13 +182,16 @@ for n, block in enumerate(taniyan_blocks, 1):
     for l in star_lines(block):
         text = re.sub(r'\s+', ' ', re.sub(r'[⋆‡॥]', '', l)).strip()
         text = re.sub(r'\s+-$', '-', text)  # a compound running on into the next line keeps its hyphen attached
-        for a, b in {'பாரொன்ற ச்சொன்ன': 'பாரொன்றச் சொன்ன', 'வானேற ப்போமளவும்': 'வானேறப் போமளவும்'}.items():
+        for a, b in {'பாரொன்ற ச்சொன்ன': 'பாரொன்றச் சொன்ன', 'வானேற ப்போமளவும்': 'வானேறப் போமளவும்',
+                     'அஞ்சுக் கிலக்கியம்': 'அஞ்சுக்கிலக்கியம்'}.items():
             text = text.replace(a, b)  # glyph-gap glitches in Swami Dēśikan's taniyan
         lines.append({'v': -n, 'text': text})
 lines += out
 
 if args.no_repeat:
     repeated -= {int(x) for x in args.no_repeat.split(',')}
+if args.repeat:
+    repeated |= {int(x) for x in args.repeat.split(',')}
 body_order = [v for v in reading for _ in range(2 if v in repeated else 1)]
 if args.join:
     # joined verses that both repeat are chanted together twice: A B A B, not A A B B (Tirupallāṇḍu)

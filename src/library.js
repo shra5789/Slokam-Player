@@ -21,10 +21,11 @@ window.SLOKAM_LIBRARY = [
         // the video is the whole of Nācciyār Tirumoḻi: its taniyan (0:00–0:21) and Vāraṇamāyiram (21:37–25:06)
         segments: [[0, 21], [1297, 1506]], duration: 230,
       },
+      // 13–15: Periya Tirumoḻi 1.7, 2.2 and 1.6, each played after the recording of its taniyans
       { n: 12, iast: 'tiruvezukūṟṟirukkai', native: 'திருவெழுகூற்றிருக்கை', text: 'tiruvezukurrirukkai', youtube: '5MPUwn8JafE' },
-      { n: 13, iast: 'aṅgaṇ ñālam', native: 'அங்கண் ஞாலம்' },
-      { n: 14, iast: 'kāśaiyāḍai', native: 'காசையாடை' },
-      { n: 15, iast: 'vāṇilā muṟuval', native: 'வாணிலா முறுவல்' },
+      { n: 13, iast: 'aṅgaṇ ñālam', native: 'அங்கண் ஞாலம்', text: 'anganjalam', audio: ['audio/periyatirumozi-taniyan.mp3', 'audio/anganjalam.mp3'], duration: 262 },
+      { n: 14, iast: 'kāśaiyāḍai', native: 'காசையாடை', text: 'kasaiyadai', audio: ['audio/periyatirumozi-taniyan.mp3', 'audio/kasaiyadai.mp3'], duration: 260 },
+      { n: 15, iast: 'vāṇilā muṟuval', native: 'வாணிலா முறுவல்', text: 'vanilamuruval', audio: ['audio/periyatirumozi-taniyan.mp3', 'audio/vanilamuruval.mp3'], duration: 323 },
     ],
   },
   {

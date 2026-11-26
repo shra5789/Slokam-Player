@@ -594,7 +594,8 @@
     dropPlayer();
     if (item.audio) {
       // an MP3 recording (prapatti.com) instead of a YouTube video
-      const ap = new AudioPlayer(item.audio, item.duration || 0, {
+      // a list of MP3s plays back to back as one track (the Periya Tirumoḻi taniyans, then the decade)
+      const ap = new (Array.isArray(item.audio) ? AudioListPlayer : AudioPlayer)(...(Array.isArray(item.audio) ? [item.audio] : [item.audio, item.duration || 0]), {
         onReady: () => { if (token === loadToken) adopt(ap); },
         onError: (code) => { if (token === loadToken) { try { ap.destroy(); } catch {} useClock(`Couldn’t load the recording (error ${code}).`); } },
       });

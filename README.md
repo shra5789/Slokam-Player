@@ -174,6 +174,8 @@ The text generators in `tools/` apply these rules when they build each slokam's 
   YouTube's embedded player won't run from a `file://` page.
 - `src/player.js` plays the recording and reports the exact playback position:
   - **MP3 recordings** (prapatti.com's) play directly in the widget.
+  - Recordings bundled with the app live in `src/audio/`. An entry can list several (`audio: [a, b]`), which play
+    back to back as one track: aṅgaṇ ñālam, kāśaiyāḍai and vāṇilā muṟuval each start with the Periya Tirumoḻi taniyans.
   - Most videos play in YouTube's **embedded player** inside the widget.
   - Some uploaders turn embedding off; the Dayāśatakam video is one of them. For those, the app opens the
     **normal YouTube page in a separate window**, kept hidden unless *Show video* is on, and controls it from

@@ -40,7 +40,7 @@ function saveSettings() {
 }
 
 // ---------- tiny static server (YouTube embeds need a real http origin, not file://) ----------
-const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
+const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg' };
 function startServer() {
   const server = http.createServer((req, res) => {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
@@ -49,7 +49,20 @@ function startServer() {
     if (!file.startsWith(SRC_DIR)) { res.writeHead(403); return res.end(); }
     fs.readFile(file, (err, data) => {
       if (err) { res.writeHead(404); return res.end('Not found'); }
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+      const type = MIME[path.extname(file)] || 'application/octet-stream';
+      // byte ranges, so the bundled MP3 recordings can be seeked
+      const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+      if (m && (m[1] || m[2])) {
+        let start = m[1] ? +m[1] : Math.max(0, data.length - +m[2]);
+        let end = m[1] && m[2] ? Math.min(+m[2], data.length - 1) : data.length - 1;
+        if (start > end || start >= data.length) {
+          res.writeHead(416, { 'Content-Range': `bytes */${data.length}` }); return res.end();
+        }
+        res.writeHead(206, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Length': end - start + 1,
+                             'Content-Range': `bytes ${start}-${end}/${data.length}` });
+        return res.end(data.subarray(start, end + 1));
+      }
+      res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Length': data.length });
       res.end(data);
     });
   });

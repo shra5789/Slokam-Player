@@ -2,7 +2,7 @@
 //  * YouTubePlayer — plays the recording through YouTube's embedded player (exact timing).
 //  * PagePlayer    — for videos whose uploader turned embedding off: the Electron main process
 //                    plays the normal YouTube page in its own window and reports the position.
-//  * AudioPlayer   — an MP3 file played directly.
+//  * AudioPlayer   — an MP3 file played directly (AudioListPlayer: several, back to back).
 //  * ClockPlayer   — last-resort stopwatch if YouTube can't be reached; the user presses
 //                    play at the same moment they start the video elsewhere.
 // All expose: time(), duration(), playing(), play(), pause(), seek(sec), destroy(), and fire onState().
@@ -51,6 +51,56 @@ class AudioPlayer {
   pause() { this.a.pause(); }
   seek(t) { this.a.currentTime = Math.max(0, Math.min(t, this.duration() || t)); }
   destroy() { this.a.pause(); this.a.removeAttribute('src'); this.a.load(); }
+}
+
+class AudioListPlayer {
+  // several MP3 files played back to back as one track: e.g. the Periya Tirumoḻi taniyans and then
+  // a decade (aṅgaṇ ñālam), each a separate recording. Time, length, seeking and looping are all in
+  // the joined-up time.
+  constructor(urls, { onReady, onError }) {
+    this.kind = 'audio'; this.loop = true; this.onState = () => {};
+    this.i = 0; this._switching = false;
+    this.parts = urls.map((u) => { const a = new Audio(); a.preload = 'auto'; a.src = u; return a; });
+    let pending = this.parts.length;
+    this.parts.forEach((a, k) => {
+      a.addEventListener('loadedmetadata', () => { if (--pending === 0) onReady && onReady(); }, { once: true });
+      a.addEventListener('error', () => onError && onError(a.error ? a.error.code : 0), { once: true });
+      a.addEventListener('play', () => { if (k === this.i) this.onState(); });
+      a.addEventListener('pause', () => { if (k === this.i && !this._switching) this.onState(); });
+      a.addEventListener('ended', () => this._ended(k));
+    });
+  }
+  _off(k) { let o = 0; for (let j = 0; j < k; j++) o += this.parts[j].duration || 0; return o; }
+  _start(a) { const r = a.play(); if (r && r.catch) r.catch(() => {}); }
+  _ended(k) {
+    if (k !== this.i) return;
+    if (k + 1 < this.parts.length) {           // on to the next recording
+      this._switching = true; this.i = k + 1;
+      const n = this.parts[this.i]; n.currentTime = 0; this._start(n);
+      this._switching = false;
+    } else if (this.loop) {
+      this.i = 0; const n = this.parts[0]; n.currentTime = 0; this._start(n);
+      this.onLoop && this.onLoop();
+    } else this.onState();
+  }
+  time() { return this._off(this.i) + (this.parts[this.i].currentTime || 0); }
+  duration() { return this._off(this.parts.length); }
+  playing() { const a = this.parts[this.i]; return !a.paused && !a.ended; }
+  play() {
+    if (this.i === this.parts.length - 1 && this.parts[this.i].ended) this.seek(0);
+    this._start(this.parts[this.i]);
+  }
+  pause() { this.parts.forEach((a) => a.pause()); }
+  seek(t) {
+    t = Math.max(0, Math.min(t, this.duration() - 0.05));
+    let k = 0;
+    while (k < this.parts.length - 1 && t >= this._off(k + 1)) k++;
+    const was = this.playing();
+    if (k !== this.i) { this._switching = true; this.parts[this.i].pause(); this.i = k; this._switching = false; }
+    this.parts[k].currentTime = t - this._off(k);
+    if (was) this._start(this.parts[k]);
+  }
+  destroy() { this.parts.forEach((a) => { a.pause(); a.removeAttribute('src'); a.load(); }); }
 }
 
 class PagePlayer {
