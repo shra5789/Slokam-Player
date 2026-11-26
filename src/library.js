@@ -7,7 +7,10 @@ window.SLOKAM_LIBRARY = [
     id: 'divya', iast: 'divya prabandaṅgaḷ', native: 'திவ்ய ப்ரபந்தங்கள்', lang: 'ta',
     items: [
       { n: 1, iast: 'tirupallāṇḍu', native: 'திருப்பல்லாண்டு', text: 'tirupallandu', youtube: 'elIW-0wTHcI', duration: 443 },
-      { n: 2, iast: 'tiruppaḷḷiyezucci', native: 'திருப்பள்ளியெழுச்சி', text: 'tiruppalliyezucci', youtube: 'VFFJvjro4eQ', duration: 327 },
+      {
+        n: 2, iast: 'tiruppaḷḷiyezucci', native: 'திருப்பள்ளியெழுச்சி', text: 'tiruppalliyezucci', youtube: 'VFFJvjro4eQ',
+        segments: [[0, 304]], duration: 304,   // the recitation ends at 5:04; the rest of the video isn't played
+      },
       { n: 3, iast: 'tiruppāvai', native: 'திருப்பாவை', text: 'tiruppavai', youtube: 'tqrJueDJ1II' },
       { n: 4, iast: 'nīrāṭṭam', native: 'நீராட்டம்' },
       { n: 5, iast: 'pūccūṭṭal', native: 'பூச்சூட்டல்', text: 'puccuttal', youtube: 'NiM4ICBSkgw', duration: 193 },

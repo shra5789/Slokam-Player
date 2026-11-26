@@ -14,8 +14,10 @@
     ITEMS[it.id] = it;
   }));
   const DEFAULT_ID = 'mummanikkovai';
-  // Anadhyayanam mode: the Divya Prabandhams aren't recited then, so they can't be played
-  const isOff = (it) => !!S.anadhyayanam && it.cat.id === 'divya';
+  // Anadhyayanam mode: the Divya Prabandhams aren't recited then, so they can't be played.
+  // Mārgaḻi mode (only with Anadhyayanam on) lets Tiruppāvai and Tiruppaḷḷiyezucci through.
+  const MARGAZHI = ['tiruppavai', 'tiruppalliyezucci'];
+  const isOff = (it) => !!S.anadhyayanam && it.cat.id === 'divya' && !(S.margazhi && MARGAZHI.includes(it.id));
   const canPlay = (it) => !!it && it.available && !isOff(it);
 
   // settings live in the Electron main process; fall back to localStorage when opened in a plain browser
@@ -392,7 +394,8 @@
   }
   function openSheet() {
     closeLibrary();
-    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam;
+    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam; $('optMargazhi').checked = !!S.margazhi;
+    $('margazhiRow').classList.toggle('hidden', !S.anadhyayanam);
     updateTimingNote();
     $('sheet').classList.remove('hidden');
   }
@@ -492,15 +495,27 @@
     $('optFont').oninput = (e) => { save({ font: +e.target.value }); applyLook(); };
     $('optVideo').onchange = (e) => { save({ video: e.target.checked }); applyLook(); };
     $('optLoop').onchange = (e) => { save({ loop: e.target.checked }); applyLook(); };
-    $('optAnadhyayanam').onchange = (e) => {
-      save({ anadhyayanam: e.target.checked }); upcoming = null;
+    function modeChanged(msg) {
+      upcoming = null;
+      $('margazhiRow').classList.toggle('hidden', !S.anadhyayanam);
       if (isOff(item)) {
         // the Divya Prabandham that's open now can't play: move on to the next slokam that can
         const next = step(1);
         if (player) player.pause();
         selectSlokam(next.id);
-        toast(`Anadhyayanam mode: the Divya Prabandhams are off, so ${next.iast} is up instead.`, 5000);
-      } else toast(e.target.checked ? 'Anadhyayanam mode: the Divya Prabandhams won’t play.' : 'Anadhyayanam mode off.', 3000);
+        toast(`${msg} ${item.iast} is up instead.`, 5000);
+      } else toast(msg, 3500);
+    }
+    $('optAnadhyayanam').onchange = (e) => {
+      save({ anadhyayanam: e.target.checked });
+      modeChanged(!e.target.checked ? 'Anadhyayanam mode off.'
+        : S.margazhi ? 'Anadhyayanam mode, Mārgaḻi: only Tiruppāvai and Tiruppaḷḷiyezucci of the Divya Prabandhams will play.'
+          : 'Anadhyayanam mode: the Divya Prabandhams won’t play.');
+    };
+    $('optMargazhi').onchange = (e) => {
+      save({ margazhi: e.target.checked });
+      modeChanged(e.target.checked ? 'Mārgaḻi mode: Tiruppāvai and Tiruppaḷḷiyezucci can play.'
+        : 'Mārgaḻi mode off: no Divya Prabandhams.');
     };
     $('offMinus').onclick = () => { saveMine({ offset: Math.round((offset() - 0.5) * 10) / 10 }); applyLook(); };
     $('offPlus').onclick = () => { saveMine({ offset: Math.round((offset() + 0.5) * 10) / 10 }); applyLook(); };
