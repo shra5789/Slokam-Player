@@ -75,6 +75,7 @@ def dev(t):
         t = t.replace(a, b)
     d = sanscript.transliterate(t, sanscript.ISO, sanscript.DEVANAGARI).replace('\ue000', 'ं')
     d = re.sub('([\u0951\u0952\u1cda])ं', 'ं\\1', d)   # svara mark after the anusvara: दे॒वानां᳚
+    d = re.sub('([\u0951\u0952\u1cda]+)ः', 'ः\\1', d)   # and after the visarga: विष्णोः᳚, not विष्णो᳚ः
     for a, b in FIXES.items():
         d = d.replace(a, b)
     return d

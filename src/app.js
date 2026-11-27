@@ -119,6 +119,35 @@
     const m = mine();
     const has = Array.isArray(m.timings) && Array.isArray(m.seq);
     let stale = has && (m.rev || 1) !== revision();
+    // A text update that moved lines about, added some or took some out, with the recording unchanged:
+    // lineMap[oldRev][old line index] = new line index (-1: taken out). Old timings follow their lines;
+    // entries for new lines get times spread over the gap they fall in (estimates, until re-synced).
+    const lineMap = stale && T.lineMap && T.lineMap[m.rev || 1];
+    if (lineMap && m.timings.length === m.seq.length) {
+      const done = m.full === false ? (m.synced || 0) : m.seq.length;
+      const old = [];
+      m.seq.forEach((i, k) => { const j = lineMap[i]; if (j != null && j >= 0) old.push({ i: j, t: m.timings[k], done: k < done }); });
+      const known = new Set(lineMap.filter((j) => j != null && j >= 0));
+      const out = []; let o = 0;
+      for (const i of defaultSeq()) {
+        if (!known.has(i)) out.push({ i, t: null, done: true });
+        else if (o < old.length && old[o].i === i) out.push(old[o++]);
+        // else: a line the old sync skipped stays skipped
+      }
+      while (o < old.length) out.push(old[o++]);
+      // spread the new entries evenly between the known times around them
+      for (let k = 0; k < out.length; k++) {
+        if (out[k].t != null) continue;
+        let e = k; while (e < out.length && out[e].t == null) e++;
+        const a = k > 0 ? out[k - 1].t : 0, b = e < out.length ? out[e].t : a + 4 * (e - k + 1);
+        for (let x = k; x < e; x++) out[x].t = Math.round((a + (b - a) * (x - k + 1) / (e - k + 1)) * 100) / 100;
+        k = e;
+      }
+      let synced2 = 0; while (synced2 < out.length && out[synced2].done) synced2++;
+      saveMine({ seq: out.map((x) => x.i), timings: out.map((x) => x.t), rev: revision(), synced: m.full === false ? synced2 : out.length, full: m.full });
+      stale = false; keptNotice = true;
+      setTimeout(() => toast(`${item.iast} was updated. Your timings are kept; any new lines have estimated times — re-sync if they’re off.`, 8000), 600);
+    }
     // A text update that only took some lines out (a taniyan the recording doesn't recite) leaves the
     // recording as it was: drop those lines' timings and keep all the others, pointed at the new lines.
     const removed = stale && T.removedLines && T.removedLines[m.rev || 1];
