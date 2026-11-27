@@ -38,6 +38,8 @@ ap.add_argument('--one-line', metavar='N,N',
                 help='show these ślōkas each as a single line (Garuḍa Daṇḍakam: 2,3,4,5, the daṇḍaka sections)')
 ap.add_argument('--repeat-last', type=int, default=1, metavar='N',
                 help='how many final ślōkas are chanted twice (Garuḍa Daṇḍakam: 2)')
+ap.add_argument('--repeat', metavar='N,N',
+                help='other ślōkas the recording chants twice (Accuasaam 98)')
 ap.add_argument('--revision', type=int, default=1,
                 help='bump when the lines or order change, so the app drops timings synced to the old ones')
 ARGS = ap.parse_args()
@@ -200,6 +202,8 @@ verses = sorted({o['v'] for o in out if o['v'] not in (0, closing)})
 numbered = [v for v in verses if v not in appendix]
 first, last = numbered[0], numbered[-1]
 twice = ({first} if not ARGS.no_first_repeat else set()) | set(numbered[-ARGS.repeat_last:])
+if ARGS.repeat:
+    twice |= {int(x) for x in ARGS.repeat.split(',')}
 if ARGS.gadyam:
     # Raghuvīra Gadyam: both closing ślōkas after the last kāṇḍa (caturmukhēśvara … and
     # kavikathakasiṃha …) are chanted twice
