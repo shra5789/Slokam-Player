@@ -11,7 +11,7 @@ character U+F203. All three are kept on the syllable they follow. Other Vēdic s
 Text printed in red (alternate readings) is left out. Vēdam is chanted straight through:
 nothing is repeated.
 
-Usage: python tools/build_vedam.py purushasuuktam.pdf purushasuktam [revision] > src/texts/purushasuktam.js
+Usage: python tools/build_vedam.py purushasuuktam.pdf purushasuktam [revision [REV:AT,N;AT,N]] > src/texts/purushasuktam.js
        (https://www.prapatti.com/slokas/english/purushasuuktam.pdf)
 """
 import json, re, sys, unicodedata
@@ -64,7 +64,9 @@ if not has_opening:
     start -= 1
 end = next(k for k, l in enumerate(lines) if l.startswith('ÁÁ iti'))
 opening = re.sub(r'Á', '', lines[start]).strip() if has_opening else None
-body = [l for l in lines[start + 1:end] if l and not SKIP.match(l) and l not in titles]
+# the sūktam's name, which a page also prints on its own as a running heading (Nārāyaṇasūktam)
+name = re.sub(r'[Á\s]', '', lines[heads[0]])
+body = [l for l in lines[start + 1:end] if l and not SKIP.match(l) and l not in titles and l.replace(' ', '') != name]
 
 def dev(t):
     t = unicodedata.normalize('NFC', t)
@@ -112,6 +114,12 @@ print('window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};')
 print('window.SLOKAM_TEXTS[%s] = {' % json.dumps(ID))
 if REVISION > 1:
     print('  revision: %d,' % REVISION)
+# optional 4th argument REV:AT,N;AT,N — the only change since revision REV is that these lines (old
+# line index AT, N lines) were taken out; the app keeps every other timing
+if len(sys.argv) > 4:
+    r_, spans = sys.argv[4].split(':')
+    print('  removedLines: { %s: %s },   // revision: [[first old line index, count], …] taken out since then'
+          % (r_, json.dumps([[int(x) for x in sp.split(',')] for sp in spans.split(';')])))
 print('  verseWord: "", verseCount: %d, labels: %s,' % (len(verses), '{ 0: "हरिः ओम्" }' if opening else '{}'))
 print('  order: %s,' % json.dumps(order))
 print('  lines: [')

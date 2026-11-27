@@ -3,6 +3,8 @@
 // order: sections in the order they are chanted. Vēdam has no repeats.
 window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};
 window.SLOKAM_TEXTS["vishnusuktam"] = {
+  revision: 2,
+  removedLines: { 1: [[16, 1], [37, 1]] },   // revision: [[first old line index, count], …] taken out since then
   verseWord: "", verseCount: 5, labels: {},
   order: [1, 2, 3, 4, 5],
   lines: [
@@ -22,7 +24,6 @@ window.SLOKAM_TEXTS["vishnusuktam"] = {
     {"v": 2, "text": "अधि॑क्षि॒यन्ति॒ भुव॑नानि॒ विश्वा᳚ ।"},
     {"v": 2, "text": "प॒रो मात्र॑या त॒नुवा॑ वृधान ।"},
     {"v": 2, "text": "न ते॑ महि॒त्वमन्व॑श्नुवन्ति ॥"},
-    {"v": 3, "text": "विष्णुसूक्तम् ।"},
     {"v": 3, "text": "उ॒भे ते॑ विद्म॒ रज॑सी पृथि॒व्या विष्णो॑ देव॒त्वम् ।"},
     {"v": 3, "text": "प॒र॒मस्य॑ विथ्से ।"},
     {"v": 3, "text": "विच॑क्रमे पृथि॒वीमे॒ष ए॒ताम् ।"},
@@ -43,7 +44,6 @@ window.SLOKAM_TEXTS["vishnusuktam"] = {
     {"v": 4, "text": "इन्द्र॑स्य॒ युज्य॒स्सखा᳚ ॥"},
     {"v": 5, "text": "तद्विष्णो᳚ः पर॒मं प॒दग्ं सदा॑ पश्यन्ति सू॒रयः॑ ।"},
     {"v": 5, "text": "दि॒वीव॒ चक्षु॒रात॑तम् ।"},
-    {"v": 5, "text": "विष्णुसूक्तम् ।"},
     {"v": 5, "text": "तद्विप्रा॑सो विप॒न्यवो॑ जागृ॒वाग्ं स॒स्समि॑न्धते ।"},
     {"v": 5, "text": "विष्णो॒र्यत्प॑र॒मं प॒दम् ।"},
     {"v": 5, "text": "पर्या᳚प्त्या॒ अन॑न्तरायाय॒ सर्व॑स्तोमोऽति रा॒त्र ।"},

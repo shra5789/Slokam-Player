@@ -123,12 +123,15 @@
     // recording as it was: drop those lines' timings and keep all the others, pointed at the new lines.
     const removed = stale && T.removedLines && T.removedLines[m.rev || 1];
     if (removed && m.timings.length === m.seq.length) {
-      const [at, n] = removed;
+      // [first old line index, count], or a list of them
+      const ranges = Array.isArray(removed[0]) ? removed : [removed];
+      const gone = (i) => ranges.some(([at, n]) => i >= at && i < at + n);
+      const shift = (i) => ranges.reduce((d, [at, n]) => d + (i >= at + n ? n : 0), 0);
       const done = m.full === false ? (m.synced || 0) : m.seq.length;
       const seq2 = [], times2 = []; let synced2 = 0;
       m.seq.forEach((i, k) => {
-        if (i >= at && i < at + n) return;
-        seq2.push(i >= at + n ? i - n : i); times2.push(m.timings[k]);
+        if (gone(i)) return;
+        seq2.push(i - shift(i)); times2.push(m.timings[k]);
         if (k < done) synced2++;
       });
       saveMine({ seq: seq2, timings: times2, rev: revision(), synced: synced2, full: m.full });

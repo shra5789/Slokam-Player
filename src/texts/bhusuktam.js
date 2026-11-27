@@ -3,9 +3,10 @@
 // order: sections in the order they are chanted. Vēdam has no repeats.
 window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};
 window.SLOKAM_TEXTS["bhusuktam"] = {
-  revision: 2,
-  verseWord: "", verseCount: 4, labels: {},
-  order: [1, 2, 3, 4],
+  revision: 3,
+  removedLines: { 2: [[17, 1], [34, 1]] },   // revision: [[first old line index, count], …] taken out since then
+  verseWord: "", verseCount: 3, labels: {},
+  order: [1, 2, 3],
   lines: [
     {"v": 1, "text": "भूमि॑र्भू॒म्ना द्यौर्व॑रि॒णाऽन्तरि॑क्षं महि॒त्वा ।"},
     {"v": 1, "text": "उ॒पस्थे॑ ते देव्यदिते॒ऽग्निम॑न्ना॒दम॒न्नाद्या॒याऽऽद॑धे ।"},
@@ -24,7 +25,6 @@ window.SLOKAM_TEXTS["bhusuktam"] = {
     {"v": 2, "text": "दे॒वी हिर॑ण्यगर्भिणी दे॒वी प्रसू॒वरी᳚ ।"},
     {"v": 2, "text": "सद॑ने स॒त्याय॑ने सीद ।"},
     {"v": 2, "text": "स॒मु॒द्रव॑ती सावि॒त्री हनो॑ दे॒वी म॒ह्यङ्गी᳚ ।"},
-    {"v": 2, "text": "भूसूक्तम् ।"},
     {"v": 2, "text": "म॒होधर॑णी म॒होध्य॑तिष्ठाः शृ॒ङ्गे शृ॑ङ्गे य॒ज्ञे य॑ज्ञे विभी॒षिणी᳚ ।"},
     {"v": 2, "text": "इन्द्र॑पत्नी व्या॒पिनी॑ सु॒रस॑रिदि॒ह ।"},
     {"v": 2, "text": "वा॒यु॒मती॑ जल॒शय॑नी श्रि॒यंधा॒ राजा॑ स॒त्यन्धो॒ परि॑मेदिनी ।"},
@@ -41,6 +41,5 @@ window.SLOKAM_TEXTS["bhusuktam"] = {
     {"v": 3, "text": "म॒हीं दिवं॑ पृथि॒वीम॒न्तरि॑क्षम् ।"},
     {"v": 3, "text": "तच्छ्रो॒णैति॒ श्रव॑ इ॒च्छमा॑ना ।"},
     {"v": 3, "text": "पुण्य॒ग्ग्श्लोकं॒ यज॑मानाय कृण्व॒ती ॥"},
-    {"v": 4, "text": "भूसूक्तम् ॥"},
   ],
 };

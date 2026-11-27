@@ -3,6 +3,8 @@
 // order: sections in the order they are chanted. Vēdam has no repeats.
 window.SLOKAM_TEXTS = window.SLOKAM_TEXTS || {};
 window.SLOKAM_TEXTS["narayanasuktam"] = {
+  revision: 2,
+  removedLines: { 1: [[14, 1]] },   // revision: [[first old line index, count], …] taken out since then
   verseWord: "", verseCount: 5, labels: {},
   order: [1, 2, 3, 4, 5],
   lines: [
@@ -20,7 +22,6 @@ window.SLOKAM_TEXTS["narayanasuktam"] = {
     {"v": 2, "text": "प॒द्म॒को॒शप्र॑तीका॒श॒ग्ं॒ हृ॒दयं॑ चाप्य॒धोमु॑खम् ।"},
     {"v": 2, "text": "अधो॑ नि॒ष्ट्या वि॑तस्त्यां॒ तु॒ ना॒भ्यामु॑परि॒ तिष्ठ॑ति ।"},
     {"v": 2, "text": "हृ॒दयं॑ तद्वि॑जानी॒या॒द्वि॒श्वस्या॑यत॒नं म॑हत् ।"},
-    {"v": 2, "text": "नारायणसूक्तम् ।"},
     {"v": 2, "text": "सन्त॑तग्ं सि॒राभि॑स्तु॒ लम्ब॑त्या कोश॒सन्नि॑भम् ।"},
     {"v": 2, "text": "तस्यान्ते॑ सुषि॒रग्ं सू॒क्ष्मं तस्मि᳚न्थ्स॒र्वं प्रति॑ष्ठितम् ।"},
     {"v": 2, "text": "तस्य॒ मध्ये॑ म॒हान॑ग्निर्वि॒श्वार्चि॑र्वि॒श्वतो॑मुखः ॥"},
