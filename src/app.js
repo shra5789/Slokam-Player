@@ -882,6 +882,22 @@
     if (part && !keptNotice) setTimeout(() => toast(`Partly synced (${part} of ${seq.length} lines). Press R or ⚙ → Resume sync to carry on.`, 6000), 800);
   }
 
+  // ---------- a handle for other front ends ----------
+  // The Samsung TV layer (tv/tv.js) drives playback from the remote with these; the Windows app
+  // doesn't use them.
+  window.SlokamApp = {
+    playing: () => !!(player && player.playing()),
+    togglePlay, jumpLine, prevTrack, nextTrack: () => nextTrack(),
+    play: () => { if (player && !player.playing()) togglePlay(); },
+    pause: () => { if (player && player.playing()) togglePlay(); },
+    stop: () => { if (!player) return; player.pause(); player.seek(0); userScrollUntil = 0; entry = -2; setTimeout(updatePlayButtons, 50); },
+    seekBy: (d) => {
+      if (!player || sync) return;
+      player.seek(Math.max(0, Math.min(player.time() + d, player.duration() - 0.5)));
+      userScrollUntil = 0; entry = -2;
+    },
+  };
+
   // ---------- start ----------
   (async () => {
     const saved = await store.getSettings();
