@@ -197,9 +197,9 @@ The text generators in `tools/` apply these rules when they build each slokam's 
   - Sanskrit: `tools/build_sanskrit_stotra.py` builds a Dēśika stōtra. prapatti.com's Devanagari PDFs use a broken
     font encoding, so the script reads the romanised edition and converts it to Devanagari.
 
-- **Script** (⚙): அ (Tamil script), A (Latin) and अ (Devanagari) toggle independently, in any combination.
-  A work shows each selected script it has — its own first, the others smaller underneath — or its own
-  script if it has none of them. The Latin is prapatti.com's own romanised ("english") edition of each
+- **Script** (⚙): அ (Tamil script), A (Latin) and अ (Devanagari) toggle independently, in any combination
+  of the ones the open work offers: the prabandhams அ A, the Dēśika stōtras अ அ A, the Vēdam अ A. Each kind
+  keeps its own choice; its own script comes first, the others smaller underneath. The Latin is prapatti.com's own romanised ("english") edition of each
   work (`lat` on each line: `build_sanskrit_stotra.py` and `build_vedam.py` write it, `tools/add_latin.py`
   copies it into a hand-edited text, `tools/add_latin_tamil.py` finds it for a Tamil text). The Dēśika
   stōtras also have Tamil script, from prapatti.com's Tamil editions (`tam`, from `tools/add_tamil_script.py`;

@@ -68,8 +68,8 @@
       <div class="sheet-head"><b>Settings</b><button id="btnSheetClose" class="icon">×</button></div>
       <label>Background <input id="optOpacity" type="range" min="0" max="0.95" step="0.05"></label>
       <label>Text size <input id="optFont" type="range" min="0.8" max="1.6" step="0.05"></label>
-      <div class="setting-row" title="Show the lyrics in any of these scripts at once: Tamil (அ), Latin (A), Devanagari (अ). A work shows each one it has — Latin from prapatti.com's romanised editions, the Dēśika stōtras' Tamil from its Tamil editions — and its own script if it has none of them.">Script
-        <span id="scriptSeg" class="seg"><button data-script="ta" class="pill-btn" lang="ta" title="Tamil script">அ</button><button data-script="lat" class="pill-btn" title="Latin">A</button><button data-script="sa" class="pill-btn" lang="sa" title="Devanagari">अ</button></span></div>
+      <div class="setting-row" title="Show the lyrics in any of these scripts at once: Tamil (அ), Latin (A), Devanagari (अ). The prabandhams offer அ and A, the Dēśika stōtras all three (their Tamil script from prapatti.com's Tamil editions), the Vēdam अ and A; each keeps its own choice. Latin is from prapatti.com's romanised editions.">Script
+        <span id="scriptSeg" class="seg"><button data-script="ta" data-name="Tamil script" class="pill-btn" lang="ta">அ</button><button data-script="lat" data-name="Latin" class="pill-btn">A</button><button data-script="sa" data-name="Devanagari" class="pill-btn" lang="sa">अ</button></span></div>
       <label>Timing offset <span class="row"><button id="offMinus" class="pill-btn">−0.5s</button><span id="offVal">0.0s</span><button id="offPlus" class="pill-btn">+0.5s</button></span></label>
       <label class="check" title="When off, the next slokam plays after this one ends"><input id="optLoop" type="checkbox"> Loop the recitation <span class="hint">(off: play the next slokam)</span></label>
       <label class="check"><input id="optVideo" type="checkbox"> Show video</label>

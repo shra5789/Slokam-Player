@@ -24,13 +24,19 @@
   };
   const SCRIPTS = ['ta', 'lat', 'sa'];   // அ A अ
   const hasTamilScript = (it) => !!it && it.cat.id === 'desika-stotramala';
+  // Each kind of work keeps its own choice, and offers only its scripts: the Tamil prabandhams அ A
+  // (no Devanagari), the Dēśika stōtras अ அ A, the Vēdam अ A (no Tamil script).
+  const kindOf = (it) => (!it ? 'prabandham' : it.cat.id === 'desika-stotramala' ? 'stotra' : it.cat.id === 'vedam' ? 'vedam' : 'prabandham');
+  const OFFERS = { prabandham: ['ta', 'lat'], stotra: ['sa', 'ta', 'lat'], vedam: ['sa', 'lat'] };
+  const DEFAULTS = { prabandham: ['ta'], stotra: ['sa'], vedam: ['sa'] };
+  const chosen = (kind) => {
+    const c = ((S.scriptsBy || {})[kind] || []).filter((x) => OFFERS[kind].includes(x));
+    return c.length ? c : DEFAULTS[kind];
+  };
   // the scripts a work is shown in, in order (its own first)
   function shownScripts(it) {
-    if (!it) return ['ta'];
-    const own = it.lang === 'sa' ? 'sa' : 'ta';
-    const has = [own, ...(hasTamilScript(it) ? ['ta'] : []), 'lat'];
-    const on = has.filter((x) => (S.scripts || []).includes(x));
-    return on.length ? on : [own];
+    const kind = kindOf(it), c = chosen(kind);
+    return OFFERS[kind].filter((x) => c.includes(x));
   }
   const primary = (it) => shownScripts(it)[0];
   const latinOnly = () => primary(item) === 'lat';
@@ -69,7 +75,7 @@
   };
 
   // S.slokams[id] = { seq, timings, offset } — synced timings and offset, per slokam
-  const S = { opacity: 0.55, font: 1, video: false, loop: true, scripts: ['ta', 'sa'], current: DEFAULT_ID, slokams: {} };
+  const S = { opacity: 0.55, font: 1, video: false, loop: true, current: DEFAULT_ID, slokams: {} };
 
   // The slokam on screen. Playback follows a *timeline*: every recited line in the order the
   // recording says it, so repeated verses appear more than once. seq[e] is the line shown for
@@ -480,7 +486,13 @@
     entry = -2; // refresh pill text
   }
   function applyScript() {
-    document.querySelectorAll('#scriptSeg button').forEach((b) => b.classList.toggle('on', (S.scripts || []).includes(b.dataset.script)));
+    const kind = kindOf(item), c = chosen(kind);
+    document.querySelectorAll('#scriptSeg button').forEach((b) => {
+      const offered = OFFERS[kind].includes(b.dataset.script);
+      b.disabled = !offered;
+      b.classList.toggle('on', offered && c.includes(b.dataset.script));
+      b.title = offered ? b.dataset.name : `${b.dataset.name}: not offered for ${kind === 'vedam' ? 'the Vēdam' : 'the prabandhams'}`;
+    });
     if (!item) return;
     document.body.dataset.script = primary(item);
     $('slokaTitle').textContent = nativeName(item);
@@ -604,12 +616,14 @@
     // Script: அ A अ toggle independently; at least one stays on
     document.querySelectorAll('#scriptSeg button').forEach((b) => {
       b.onclick = () => {
-        const cur = new Set(S.scripts || []);
+        const kind = kindOf(item);
+        if (!OFFERS[kind].includes(b.dataset.script)) return;
+        const cur = new Set(chosen(kind));
         if (cur.has(b.dataset.script)) {
           if (cur.size === 1) return toast('At least one script stays on.', 2000);
           cur.delete(b.dataset.script);
         } else cur.add(b.dataset.script);
-        save({ scripts: SCRIPTS.filter((x) => cur.has(x)) });
+        save({ scriptsBy: { ...(S.scriptsBy || {}), [kind]: SCRIPTS.filter((x) => cur.has(x)) } });
         if (item) { buildLines(); entry = -2; activeLine = -2; }
         applyLook();
       };
@@ -872,13 +886,28 @@
   (async () => {
     const saved = await store.getSettings();
     Object.assign(S, saved);
-    if (!Array.isArray(saved.scripts)) {
-      // from the earlier Original / Latin / Both setting (and "Dēśika stōtras in Tamil script"), looking
-      // just as it did: the Tamil works still show Tamil, as their own script
-      const own = S.stotraTamil ? ['ta'] : ['sa'];
-      S.scripts = S.script === 'lat' ? ['lat'] : S.script === 'both' ? [...own, 'lat'] : own;
-      S.scripts = SCRIPTS.filter((x) => S.scripts.includes(x));
-      save({ scripts: S.scripts, script: null, stotraTamil: null });
+    if (!saved.scriptsBy) {
+      // from the earlier settings, each kind looking just as it did
+      let by;
+      if (Array.isArray(saved.scripts)) {
+        // one choice for every work (அ A अ): each kind showed what it offered of it, or its own script
+        by = {};
+        for (const kind of Object.keys(OFFERS)) {
+          const c = OFFERS[kind].filter((x) => saved.scripts.includes(x));
+          by[kind] = SCRIPTS.filter((x) => (c.length ? c : DEFAULTS[kind]).includes(x));
+        }
+      } else {
+        // Original / Latin / Both, and "Dēśika stōtras in Tamil script"
+        const st = S.stotraTamil ? ['ta'] : ['sa'];
+        const own = { prabandham: ['ta'], stotra: st, vedam: ['sa'] };
+        by = {};
+        for (const kind of Object.keys(OFFERS)) {
+          const c = S.script === 'lat' ? ['lat'] : S.script === 'both' ? [...own[kind], 'lat'] : own[kind];
+          by[kind] = SCRIPTS.filter((x) => c.includes(x));
+        }
+      }
+      S.scriptsBy = by;
+      save({ scriptsBy: by, scripts: null, script: null, stotraTamil: null });
     }
     S.slokams = S.slokams || {};
     // settings from before the library existed belonged to Mummanikkovai

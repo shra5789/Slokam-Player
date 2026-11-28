@@ -292,5 +292,6 @@ body.page-mode .video-box { display: none; }
 .title:lang(ta-Latn), .title:lang(sa-Latn), .pill-text:lang(ta-Latn), .pill-text:lang(sa-Latn) { font-family: var(--latin); }
 #scriptSeg .pill-btn { min-width: 38px; font-size: 14px; padding-top: 2px; padding-bottom: 2px; }
 #scriptSeg .pill-btn:lang(ta), #scriptSeg .pill-btn:lang(sa) { font-family: var(--tamil); }
+#scriptSeg .pill-btn:disabled { opacity: .3; cursor: not-allowed; }
 /* keep the script toggles visibly separate when neighbours are both on */
 .seg .pill-btn.on + .pill-btn.on { box-shadow: inset 1px 0 0 rgba(26, 22, 32, .35); }
