@@ -4,8 +4,11 @@
   const LIB = window.SLOKAM_LIBRARY;
   const TEXTS = window.SLOKAM_TEXTS || {};
   const REPEAT_WORD = { ta: 'மீண்டும்', sa: 'पुनः' };
-  // Script setting: the original script ('orig'), Latin ('lat', each line as prapatti.com's romanised
-  // edition prints it) or both. Labels and verse words in Latin:
+  // Script setting: any combination of Tamil script (அ), Latin (A) and Devanagari (अ). A work shows each
+  // selected script it has: its own script first, full size, the others smaller underneath. If it has
+  // none of them, it shows its own script. Latin is each line's "lat" (prapatti.com's romanised edition);
+  // the Dēśika stōtras also have Tamil script ("tam", from prapatti.com's Tamil editions).
+  // Labels and verse words in Latin:
   const LATIN = {
     'தனியன்': 'taniyan', 'तनियन्': 'taniyan', 'பாசுரம்': 'pāsuram', 'श्लोकः': 'ślōkaḥ', 'गायत्री': 'gāyatrī',
     'हरिः ओम्': 'hariḥ ōm', 'மீண்டும்': 'mīṇḍum', 'पुनः': 'punaḥ',
@@ -13,18 +16,31 @@
     'किष्किन्धाकाण्डम्': 'kiṣkindhākāṇḍam', 'सुन्दरकाण्डम्': 'sundarakāṇḍam', 'युद्धकाण्डम्': 'yuddhakāṇḍam',
     'उत्तरकाण्डम्': 'uttarakāṇḍam',
   };
-  const latinOnly = () => S.script === 'lat';
-  // "Dēśika stōtras in Tamil script": the stōtras' Devanagari shown in Tamil letters instead (each line's
-  // "tam", from prapatti.com's Tamil edition). Labels then read:
+  // … and in Tamil script, for the Dēśika stōtras:
   const TAMIL = {
     'तनियन्': 'தனியன்', 'श्लोकः': 'ஶ்லோக:', 'पुनः': 'புந:', 'बालकाण्डम्': 'பா₃லகாண்ட₃ம்', 'अयोध्याकाण्डम्': 'அயோத்₄யாகாண்ட₃ம்',
     'आरण्यकाण्डम्': 'ஆரண்யகாண்ட₃ம்', 'किष्किन्धाकाण्डम्': 'கிஷ்கிந்தா₄காண்ட₃ம்', 'सुन्दरकाण्डम्': 'ஸுந்த₃ரகாண்ட₃ம்',
     'युद्धकाण्डम्': 'யுத்₃த₄காண்ட₃ம்', 'उत्तरकाण्डम्': 'உத்தரகாண்ட₃ம்',
   };
-  const inTamil = (it) => !!S.stotraTamil && !!it && (it.cat.id === 'desika-stotramala');
+  const SCRIPTS = ['ta', 'lat', 'sa'];   // அ A अ
+  const hasTamilScript = (it) => !!it && it.cat.id === 'desika-stotramala';
+  // the scripts a work is shown in, in order (its own first)
+  function shownScripts(it) {
+    if (!it) return ['ta'];
+    const own = it.lang === 'sa' ? 'sa' : 'ta';
+    const has = [own, ...(hasTamilScript(it) ? ['ta'] : []), 'lat'];
+    const on = has.filter((x) => (S.scripts || []).includes(x));
+    return on.length ? on : [own];
+  }
+  const primary = (it) => shownScripts(it)[0];
+  const latinOnly = () => primary(item) === 'lat';
+  const inTamil = (it) => hasTamilScript(it) && primary(it) === 'ta';
   // a work's (or category's) name in the script it's shown in
-  const nativeName = (it) => (inTamil(it) && it.tamil) || it.native;
-  const nativeLang = (it) => (inTamil(it) && it.tamil ? 'sa-Taml' : it.lang);
+  const nativeName = (it) => (primary(it) === 'lat' ? it.iast : (inTamil(it) && it.tamil) || it.native);
+  const nativeLang = (it) => (primary(it) === 'lat' ? it.lang + '-Latn' : inTamil(it) && it.tamil ? 'sa-Taml' : it.lang);
+  // a line in a given script ('ta' on a Sanskrit text is its Tamil-script form)
+  const lineIn = (ln, x) => (x === 'lat' ? ln.lat : x === 'ta' && item.lang === 'sa' ? ln.tam : ln.text) || ln.text;
+  const langOf = (x) => (x === 'lat' ? item.lang + '-Latn' : x === 'ta' && item.lang === 'sa' ? 'sa-Taml' : item.lang);
   const L = (w) => (!w ? w : latinOnly() ? LATIN[w] || w : inTamil(item) ? TAMIL[w] || w : w);
 
   // every library entry, with its category's language, by id (the text key, or "n<number>")
@@ -53,7 +69,7 @@
   };
 
   // S.slokams[id] = { seq, timings, offset } — synced timings and offset, per slokam
-  const S = { opacity: 0.55, font: 1, video: false, loop: true, script: 'orig', current: DEFAULT_ID, slokams: {} };
+  const S = { opacity: 0.55, font: 1, video: false, loop: true, scripts: ['ta', 'sa'], current: DEFAULT_ID, slokams: {} };
 
   // The slokam on screen. Playback follows a *timeline*: every recited line in the order the
   // recording says it, so repeated verses appear more than once. seq[e] is the line shown for
@@ -239,17 +255,14 @@
       // inline span: when a line wraps, its background is laid out as one continuous strip,
       // so the highlight sweeps the first row and then the second instead of both at once
       if (ln.rep) li.classList.add('line-repeat'); // shown with ↻ in front
-      const txt = document.createElement('span'); txt.className = 'txt';
-      const tam = inTamil(item) && ln.tam;
-      txt.textContent = tam || ln.text;
-      if (tam) txt.lang = 'sa-Taml';
-      li.appendChild(txt);
-      // the same line in Latin script (shown, or shown underneath, per the Script setting)
-      if (ln.lat) {
-        const lat = document.createElement('span'); lat.className = 'lat'; lat.textContent = ln.lat;
-        lat.lang = item.lang + '-Latn';
-        li.appendChild(lat);
-      } else li.classList.add('no-lat');
+      // the line in each script the Script setting shows: the first full size (and highlighted), the
+      // others smaller underneath
+      shownScripts(item).forEach((x, k) => {
+        const el = document.createElement('span');
+        el.className = (k === 0 ? 'txt' : 'sub') + ' script-' + x;
+        el.textContent = lineIn(ln, x); el.lang = langOf(x);
+        li.appendChild(el);
+      });
       li.addEventListener('click', () => {
         if (sync || !player) return;
         // a repeated line has several timeline entries: jump to the one nearest the current position
@@ -294,8 +307,8 @@
       li.classList.toggle('past', k < line); // on a repeat, lines after it light back up as "to come"
     });
     $('verseLabel').textContent = label(e);
-    $('pillText').textContent = line < 0 ? (latinOnly() ? item.iast : nativeName(item))
-      : (latinOnly() && T.lines[line].lat) || (inTamil(item) && T.lines[line].tam) || T.lines[line].text;
+    $('pillText').textContent = line < 0 ? nativeName(item) : lineIn(T.lines[line], primary(item));
+    $('pillText').lang = line < 0 ? nativeLang(item) : langOf(primary(item));
     if (changed && performance.now() > userScrollUntil) {
       const target = scrollLine ?? line;
       scrollToLine(target, Math.abs(target - prevLine) < 14);
@@ -467,13 +480,12 @@
     entry = -2; // refresh pill text
   }
   function applyScript() {
-    const mode = ['orig', 'lat', 'both'].includes(S.script) ? S.script : 'orig';
-    document.body.dataset.script = mode;
-    document.querySelectorAll('#scriptSeg button').forEach((b) => b.classList.toggle('on', b.dataset.script === mode));
+    document.querySelectorAll('#scriptSeg button').forEach((b) => b.classList.toggle('on', (S.scripts || []).includes(b.dataset.script)));
     if (!item) return;
-    $('slokaTitle').textContent = latinOnly() ? item.iast : nativeName(item);
-    $('slokaTitle').lang = latinOnly() ? item.lang + '-Latn' : nativeLang(item);
-    $('slokaTitle').title = latinOnly() ? nativeName(item) : item.iast;
+    document.body.dataset.script = primary(item);
+    $('slokaTitle').textContent = nativeName(item);
+    $('slokaTitle').lang = nativeLang(item);
+    $('slokaTitle').title = latinOnly() ? item.native : item.iast;
     if (lis.length) markVerses();
   }
   function updateTimingNote() {
@@ -487,7 +499,7 @@
   }
   function openSheet() {
     closeLibrary();
-    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam; $('optStotraTamil').checked = !!S.stotraTamil; $('optMargazhi').checked = !!S.margazhi;
+    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam; $('optMargazhi').checked = !!S.margazhi;
     $('margazhiRow').classList.toggle('hidden', !S.anadhyayanam);
     updateTimingNote();
     $('sheet').classList.remove('hidden');
@@ -505,17 +517,19 @@
       const h = document.createElement('div');
       h.className = 'lib-cat';
       // original script (Tamil or Devanagari) first, IAST under it
-      const [main, sub] = [(S.stotraTamil && cat.id === 'desika-stotramala' && cat.tamil) || cat.native, cat.iast];
+      // a category's name follows its first work's script
+      const lead = cat.items[0];
+      const [main, sub] = [primary(lead) === 'lat' ? cat.iast : (inTamil(lead) && cat.tamil) || cat.native, primary(lead) === 'lat' ? cat.native : cat.iast];
       h.innerHTML = `<span class="lib-main"></span><span class="lib-sub"></span>`;
       h.children[0].textContent = main; h.children[1].textContent = sub;
-      h.children[0].lang = S.stotraTamil && cat.id === 'desika-stotramala' && cat.tamil ? 'sa-Taml' : cat.lang;
+      h.children[0].lang = nativeLang(lead);
       sec.appendChild(h);
       cat.items.forEach((it) => {
         const b = document.createElement('button');
         b.className = 'lib-item' + (it.available ? '' : ' soon') + (isOff(it) ? ' off' : '') + (item && it.id === item.id ? ' current' : '');
         b.disabled = !canPlay(it);
         if (isOff(it)) b.title = 'Anadhyayanam mode is on (⚙ Settings)';
-        const [m, s] = [nativeName(it), it.iast];
+        const [m, s] = [nativeName(it), primary(it) === 'lat' ? it.native : it.iast];
         b.innerHTML = '<span class="lib-n"></span><span class="lib-names"><span class="lib-main"></span><span class="lib-sub"></span></span><span class="lib-tag"></span>';
         b.querySelector('.lib-n').textContent = it.n;
         b.querySelector('.lib-main').textContent = m;
@@ -587,13 +601,18 @@
     $('optOpacity').oninput = (e) => { save({ opacity: +e.target.value }); applyLook(); };
     $('optFont').oninput = (e) => { save({ font: +e.target.value }); applyLook(); };
     $('optVideo').onchange = (e) => { save({ video: e.target.checked }); applyLook(); };
-    $('optStotraTamil').onchange = (e) => {
-      save({ stotraTamil: e.target.checked });
-      if (item && item.cat.id === 'desika-stotramala') { buildLines(); entry = -2; activeLine = -2; }
-      applyLook();
-    };
+    // Script: அ A अ toggle independently; at least one stays on
     document.querySelectorAll('#scriptSeg button').forEach((b) => {
-      b.onclick = () => { save({ script: b.dataset.script }); applyLook(); };
+      b.onclick = () => {
+        const cur = new Set(S.scripts || []);
+        if (cur.has(b.dataset.script)) {
+          if (cur.size === 1) return toast('At least one script stays on.', 2000);
+          cur.delete(b.dataset.script);
+        } else cur.add(b.dataset.script);
+        save({ scripts: SCRIPTS.filter((x) => cur.has(x)) });
+        if (item) { buildLines(); entry = -2; activeLine = -2; }
+        applyLook();
+      };
     });
     $('optLoop').onchange = (e) => { save({ loop: e.target.checked }); applyLook(); };
     function modeChanged(msg) {
@@ -851,7 +870,16 @@
 
   // ---------- start ----------
   (async () => {
-    Object.assign(S, await store.getSettings());
+    const saved = await store.getSettings();
+    Object.assign(S, saved);
+    if (!Array.isArray(saved.scripts)) {
+      // from the earlier Original / Latin / Both setting (and "Dēśika stōtras in Tamil script"), looking
+      // just as it did: the Tamil works still show Tamil, as their own script
+      const own = S.stotraTamil ? ['ta'] : ['sa'];
+      S.scripts = S.script === 'lat' ? ['lat'] : S.script === 'both' ? [...own, 'lat'] : own;
+      S.scripts = SCRIPTS.filter((x) => S.scripts.includes(x));
+      save({ scripts: S.scripts, script: null, stotraTamil: null });
+    }
     S.slokams = S.slokams || {};
     // settings from before the library existed belonged to Mummanikkovai
     if (S.timings || S.seq || S.offset) {

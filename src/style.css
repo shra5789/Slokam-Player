@@ -97,14 +97,12 @@ body[data-cat="vedam"] .line { font-family: "Slokam Vedic", var(--tamil); line-h
    and fill one after the other, in reading order. */
 /* the whole current line lights up at once */
 .line.active .txt { color: #fff; }
-/* Script setting: the Latin form of each line (prapatti.com's romanised edition) */
-.line .lat { display: none; font-family: var(--latin); font-weight: 600; overflow-wrap: anywhere; }
-body[data-script="lat"] .line .lat { display: inline; }
-body[data-script="lat"] .line:not(.no-lat) .txt { display: none; }
-body[data-script="both"] .line .lat { display: block; font-size: .7em; font-weight: 500; margin-top: .15em; opacity: .85; }
-.line.active .lat { color: #fff; }
-body[data-script="lat"] .line.line-repeat .lat::before { content: "↻ "; color: var(--accent); }
-body[data-cat="vedam"] .line .lat { font-family: "Slokam Vedic", var(--latin); }
+/* Script setting: the line in each chosen script — the first full size, the others smaller underneath */
+.line .sub { display: block; font-size: .7em; font-weight: 500; margin-top: .15em; opacity: .85; overflow-wrap: anywhere; }
+.line.active .sub { color: #fff; }
+.line .script-lat { font-family: var(--latin); }
+body[data-cat="vedam"] .line .script-lat { font-family: "Slokam Vedic", var(--latin); }
+.line .txt.script-lat { font-weight: 600; }
 .line.active:hover { background-color: transparent; }
 .line.verse-start { margin-top: calc(14px * var(--scale)); position: relative; }
 .line.verse-start::before {
@@ -291,4 +289,8 @@ body.page-mode .video-box { display: none; }
 /* ⏮'s preview sits at the left edge, so anchor it there instead of centring */
 .next-preview.prev { left: 0; transform: none; }
 /* Latin script setting: titles and the minimized pill in a Latin font */
-.title:lang(ta-Latn), .title:lang(sa-Latn), body[data-script="lat"] .pill-text { font-family: var(--latin); }
+.title:lang(ta-Latn), .title:lang(sa-Latn), .pill-text:lang(ta-Latn), .pill-text:lang(sa-Latn) { font-family: var(--latin); }
+#scriptSeg .pill-btn { min-width: 38px; font-size: 14px; padding-top: 2px; padding-bottom: 2px; }
+#scriptSeg .pill-btn:lang(ta), #scriptSeg .pill-btn:lang(sa) { font-family: var(--tamil); }
+/* keep the script toggles visibly separate when neighbours are both on */
+.seg .pill-btn.on + .pill-btn.on { box-shadow: inset 1px 0 0 rgba(26, 22, 32, .35); }
