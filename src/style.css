@@ -4,6 +4,10 @@
   unicode-range: U+0900-097F, U+1CD0-1CFF, U+A8E0-A8FF, U+200C-200D, U+25CC; }
 @font-face { font-family: "Slokam Devanagari"; font-weight: 600 700; src: url("fonts/NotoSansDevanagari-600.woff2") format("woff2");
   unicode-range: U+0900-097F, U+1CD0-1CFF, U+A8E0-A8FF, U+200C-200D, U+25CC; }
+/* Vēdam: Tiro Devanagari Sanskrit (SIL Open Font License) stacks the svara marks above the vowel signs
+   instead of on top of them. It has one weight; the browser thickens it to match the other lyrics. */
+@font-face { font-family: "Slokam Vedic"; src: url("fonts/TiroDevanagariSanskrit-400.woff2") format("woff2");
+  unicode-range: U+0900-097F, U+1CD0-1CFF, U+A8E0-A8FF, U+200C-200D, U+25CC; }
 
 :root {
   --bg-a: 0.55;           /* panel opacity, set from settings */
@@ -77,6 +81,7 @@ body.playing:not(:hover) .controls { opacity: 0; }
   transform-origin: left center;
 }
 .line:hover { background: rgba(var(--fg), .07); }
+body[data-cat="vedam"] .line { font-family: "Slokam Vedic", var(--tamil); line-height: 1.7; font-size: calc(17px * var(--scale)); }
 /* a word longer than the whole line (long Sanskrit compounds) wraps instead of running off screen */
 .line .txt { overflow-wrap: anywhere; }
 .line.past { color: rgba(var(--fg), .28); }
@@ -202,6 +207,7 @@ body.fullscreen .line {
   line-height: 1.35; padding: .18em .4em; margin: 0;
   transform-origin: center center;
 }
+body.fullscreen[data-cat="vedam"] .line { line-height: 1.6; }
 body.fullscreen .line.active { transform: scale(1.08); }
 body.fullscreen .line.verse-start { margin-top: 1.1em; }
 body.fullscreen .line.verse-start::before {

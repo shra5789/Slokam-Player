@@ -191,8 +191,9 @@ The text generators in `tools/` apply these rules when they build each slokam's 
     `tools/build_mummanikkovai.py` builds Mummanikkovai, whose taniyan and closing *சீரார் தூப்புல் …* aren't in its recording.
     Both split a verse into lines at each ⋆, as the PDFs mark them, rather than where the PDF wraps its printed lines.
   - Vēdam: `tools/build_vedam.py` builds a sūktam from the romanised edition, keeping the Taittirīya svara marks
-    (anudātta ॒, svarita ॑, dīrgha svarita ᳚). The app bundles Noto Sans Devanagari (`src/fonts/`, SIL Open Font
-    License) because it draws those marks, which Windows' own Devanagari font may not.
+    (anudātta ॒, svarita ॑, dīrgha svarita ᳚). Vēdam lyrics use the bundled Tiro Devanagari Sanskrit, which stacks
+    those marks above the vowel signs; other Devanagari uses the bundled Noto Sans Devanagari (both `src/fonts/`, SIL Open
+    Font License).
   - Sanskrit: `tools/build_sanskrit_stotra.py` builds a Dēśika stōtra. prapatti.com's Devanagari PDFs use a broken
     font encoding, so the script reads the romanised edition and converts it to Devanagari.
 

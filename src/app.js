@@ -779,6 +779,7 @@
     item = it; T = TEXTS[it.text];
     save({ current: it.id });
     document.body.dataset.lang = it.lang;
+    document.body.dataset.cat = it.cat.id;   // Vēdam lyrics use a font made for svara marks
     $('slokaTitle').textContent = it.native;
     $('slokaTitle').lang = it.lang;
     $('slokaTitle').title = it.iast;
