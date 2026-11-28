@@ -121,17 +121,19 @@
     let stale = has && (m.rev || 1) !== revision();
     // A text update that moved lines about, added some or took some out, with the recording unchanged:
     // lineMap[oldRev][old line index] = new line index (-1: taken out). Old timings follow their lines;
-    // entries for new lines get times spread over the gap they fall in (estimates, until re-synced).
+    // entries for new lines, or new repeats of a line, get times spread over the gap they fall in
+    // (estimates, until re-synced).
     const lineMap = stale && T.lineMap && T.lineMap[m.rev || 1];
     if (lineMap && m.timings.length === m.seq.length) {
       const done = m.full === false ? (m.synced || 0) : m.seq.length;
       const old = [];
       m.seq.forEach((i, k) => { const j = lineMap[i]; if (j != null && j >= 0) old.push({ i: j, t: m.timings[k], done: k < done }); });
       const known = new Set(lineMap.filter((j) => j != null && j >= 0));
-      const out = []; let o = 0;
+      const out = []; let o = 0; const seen = new Set();
       for (const i of defaultSeq()) {
-        if (!known.has(i)) out.push({ i, t: null, done: true });
-        else if (o < old.length && old[o].i === i) out.push(old[o++]);
+        if (o < old.length && old[o].i === i) { seen.add(i); out.push(old[o++]); }
+        // a new line, or a line now said once more (a new repeat): estimated
+        else if (!known.has(i) || seen.has(i)) out.push({ i, t: null, done: true });
         // else: a line the old sync skipped stays skipped
       }
       while (o < old.length) out.push(old[o++]);
