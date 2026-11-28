@@ -4,6 +4,17 @@
   const LIB = window.SLOKAM_LIBRARY;
   const TEXTS = window.SLOKAM_TEXTS || {};
   const REPEAT_WORD = { ta: 'மீண்டும்', sa: 'पुनः' };
+  // Script setting: the original script ('orig'), Latin ('lat', each line as prapatti.com's romanised
+  // edition prints it) or both. Labels and verse words in Latin:
+  const LATIN = {
+    'தனியன்': 'taniyan', 'तनियन्': 'taniyan', 'பாசுரம்': 'pāsuram', 'श्लोकः': 'ślōkaḥ', 'गायत्री': 'gāyatrī',
+    'हरिः ओम्': 'hariḥ ōm', 'மீண்டும்': 'mīṇḍum', 'पुनः': 'punaḥ',
+    'बालकाण्डम्': 'bālakāṇḍam', 'अयोध्याकाण्डम्': 'ayōdhyākāṇḍam', 'आरण्यकाण्डम्': 'āraṇyakāṇḍam',
+    'किष्किन्धाकाण्डम्': 'kiṣkindhākāṇḍam', 'सुन्दरकाण्डम्': 'sundarakāṇḍam', 'युद्धकाण्डम्': 'yuddhakāṇḍam',
+    'उत्तरकाण्डम्': 'uttarakāṇḍam',
+  };
+  const latinOnly = () => S.script === 'lat';
+  const L = (w) => (latinOnly() && w ? LATIN[w] || w : w);
 
   // every library entry, with its category's language, by id (the text key, or "n<number>")
   const ITEMS = {};
@@ -31,7 +42,7 @@
   };
 
   // S.slokams[id] = { seq, timings, offset } — synced timings and offset, per slokam
-  const S = { opacity: 0.55, font: 1, video: false, loop: true, current: DEFAULT_ID, slokams: {} };
+  const S = { opacity: 0.55, font: 1, video: false, loop: true, script: 'orig', current: DEFAULT_ID, slokams: {} };
 
   // The slokam on screen. Playback follows a *timeline*: every recited line in the order the
   // recording says it, so repeated verses appear more than once. seq[e] is the line shown for
@@ -69,8 +80,8 @@
     if (e < 0 || e >= seq.length) return '';
     const v = T.lines[seq[e]].v;
     const num = chantedAgain(v) ? `${shownNum(v)} ${REPEAT_MARK}` : shownNum(v);
-    const name = (T.labels && T.labels[v]) || `${T.verseWord} ${num} / ${T.verseCount}`.trim();
-    return name + (isRepeat(e) ? ' · ' + REPEAT_WORD[item.lang] : '');
+    const name = L(T.labels && T.labels[v]) || `${L(T.verseWord)} ${num} / ${T.verseCount}`.trim();
+    return name + (isRepeat(e) ? ' · ' + L(REPEAT_WORD[item.lang]) : '');
   }
   let toastTimer;
   function toast(msg, ms = 3500) {
@@ -219,6 +230,12 @@
       if (ln.rep) li.classList.add('line-repeat'); // shown with ↻ in front
       const txt = document.createElement('span'); txt.className = 'txt'; txt.textContent = ln.text;
       li.appendChild(txt);
+      // the same line in Latin script (shown, or shown underneath, per the Script setting)
+      if (ln.lat) {
+        const lat = document.createElement('span'); lat.className = 'lat'; lat.textContent = ln.lat;
+        lat.lang = item.lang + '-Latn';
+        li.appendChild(lat);
+      } else li.classList.add('no-lat');
       li.addEventListener('click', () => {
         if (sync || !player) return;
         // a repeated line has several timeline entries: jump to the one nearest the current position
@@ -236,7 +253,7 @@
     lis.forEach((li) => {
       if (li.dataset.v === undefined) return;
       const v = +li.dataset.v;
-      const base = (T.labels && T.labels[v]) || shownNum(v);
+      const base = L(T.labels && T.labels[v]) || shownNum(v);
       li.dataset.verse = chantedAgain(v) ? `${base} ${REPEAT_MARK}` : base;
     });
   }
@@ -263,7 +280,8 @@
       li.classList.toggle('past', k < line); // on a repeat, lines after it light back up as "to come"
     });
     $('verseLabel').textContent = label(e);
-    $('pillText').textContent = line < 0 ? item.native : T.lines[line].text;
+    $('pillText').textContent = line < 0 ? (latinOnly() ? item.iast : item.native)
+      : (latinOnly() && T.lines[line].lat) || T.lines[line].text;
     if (changed && performance.now() > userScrollUntil) {
       const target = scrollLine ?? line;
       scrollToLine(target, Math.abs(target - prevLine) < 14);
@@ -426,12 +444,23 @@
     document.documentElement.style.setProperty('--bg-a', S.opacity);
     document.documentElement.style.setProperty('--scale', S.font);
     document.body.classList.toggle('show-video', !!S.video);
+    applyScript();
     if (item) $('offVal').textContent = (offset() >= 0 ? '+' : '') + offset().toFixed(1) + 's';
     if (player) {
       player.loop = !!S.loop && !sync;
       if (player.show) player.show(!!S.video);
     }
     entry = -2; // refresh pill text
+  }
+  function applyScript() {
+    const mode = ['orig', 'lat', 'both'].includes(S.script) ? S.script : 'orig';
+    document.body.dataset.script = mode;
+    document.querySelectorAll('#scriptSeg button').forEach((b) => b.classList.toggle('on', b.dataset.script === mode));
+    if (!item) return;
+    $('slokaTitle').textContent = latinOnly() ? item.iast : item.native;
+    $('slokaTitle').lang = latinOnly() ? item.lang + '-Latn' : item.lang;
+    $('slokaTitle').title = latinOnly() ? item.native : item.iast;
+    if (lis.length) markVerses();
   }
   function updateTimingNote() {
     const part = syncedCount();
@@ -544,6 +573,9 @@
     $('optOpacity').oninput = (e) => { save({ opacity: +e.target.value }); applyLook(); };
     $('optFont').oninput = (e) => { save({ font: +e.target.value }); applyLook(); };
     $('optVideo').onchange = (e) => { save({ video: e.target.checked }); applyLook(); };
+    document.querySelectorAll('#scriptSeg button').forEach((b) => {
+      b.onclick = () => { save({ script: b.dataset.script }); applyLook(); };
+    });
     $('optLoop').onchange = (e) => { save({ loop: e.target.checked }); applyLook(); };
     function modeChanged(msg) {
       upcoming = null;
@@ -784,7 +816,7 @@
     document.body.dataset.cat = it.cat.id;   // Vēdam lyrics use a font made for svara marks
     $('slokaTitle').textContent = it.native;
     $('slokaTitle').lang = it.lang;
-    $('slokaTitle').title = it.iast;
+    $('slokaTitle').title = it.iast;   // applyLook → applyScript swaps these in Latin mode
     loadTimings();
     buildLines();
     entry = -2; activeLine = -2;

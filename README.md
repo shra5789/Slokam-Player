@@ -197,9 +197,14 @@ The text generators in `tools/` apply these rules when they build each slokam's 
   - Sanskrit: `tools/build_sanskrit_stotra.py` builds a Dēśika stōtra. prapatti.com's Devanagari PDFs use a broken
     font encoding, so the script reads the romanised edition and converts it to Devanagari.
 
+- **Script** (⚙): show each line in its original script, in Latin, or both. The Latin is prapatti.com's own
+  romanised ("english") edition of the same work. Each line's Latin is its `lat` field:
+  `build_sanskrit_stotra.py` and `build_vedam.py` write it; `tools/add_latin.py` copies it into a text that's
+  been edited by hand, and `tools/add_latin_tamil.py` finds it for a Tamil text in the romanised PDF.
+
 ### Adding a slokam
 
-1. Build `src/texts/<name>.js` with `tools/build_tamil_prabandham.py`, `tools/build_sanskrit_stotra.py` or `tools/build_vedam.py`
+1. Build `src/texts/<name>.js` (then, for Tamil, run `tools/add_latin_tamil.py` on it) with `tools/build_tamil_prabandham.py`, `tools/build_sanskrit_stotra.py` or `tools/build_vedam.py`
    (or a new script that produces the same shape, applying the repeat rule for its kind).
 2. Add `<script src="texts/<name>.js">` to `src/index.html`.
 3. In `src/library.js`, give the entry `text: '<name>'` and `youtube: '<video id>'`.

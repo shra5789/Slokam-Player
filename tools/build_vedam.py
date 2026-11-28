@@ -84,13 +84,18 @@ def dev(t):
 FIXES = {'स॒हस्र॑ शीर्षा॒': 'स॒हस्र॑शीर्षा॒'}
 
 END = re.compile(r'ÁÁ\s*(\d+)\s*ÁÁ\s*$')
-out, verse, group = ([{'v': 0, 'text': dev(opening)}] if opening else []), 1, []
+out, verse, group = ([{'v': 0, 'text': dev(opening), 'lat': unicodedata.normalize('NFC', opening.replace('\uf203', '\u1cda'))}] if opening else []), 1, []
 
 def flush(group, verse):
     for idx, raw in enumerate(group):
         text = re.sub(r'(ÁÁ\s*\d+\s*ÁÁ|ÁÁ|Á)\s*$', '', raw).strip()
         # every line of the sūktam ends with "।", and the last line of a section with "॥"
-        out.append({'v': verse, 'text': dev(text) + (' ॥' if idx == len(group) - 1 else ' ।')})
+        end = idx == len(group) - 1
+        # 'lat': the line as prapatti.com's romanised edition prints it (its private-use dīrgha svarita
+        # character written as ᳚), for the app's Latin-script view
+        latin = unicodedata.normalize('NFC', text.replace('\uf203', '\u1cda'))
+        latin = latin.replace('ŗ', 'r\u0327')   # r + cedilla: the Vēdam font has no single ŗ
+        out.append({'v': verse, 'text': dev(text) + (' ॥' if end else ' ।'), 'lat': latin + (' ||' if end else ' |')})
 
 for l in body:
     group.append(l)

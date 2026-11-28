@@ -5,9 +5,9 @@
 @font-face { font-family: "Slokam Devanagari"; font-weight: 600 700; src: url("fonts/NotoSansDevanagari-600.woff2") format("woff2");
   unicode-range: U+0900-097F, U+1CD0-1CFF, U+A8E0-A8FF, U+200C-200D, U+25CC; }
 /* Vēdam: Tiro Devanagari Sanskrit (SIL Open Font License) stacks the svara marks above the vowel signs
-   instead of on top of them. It has one weight; the browser thickens it to match the other lyrics. */
-@font-face { font-family: "Slokam Vedic"; src: url("fonts/TiroDevanagariSanskrit-400.woff2") format("woff2");
-  unicode-range: U+0900-097F, U+1CD0-1CFF, U+A8E0-A8FF, U+200C-200D, U+25CC; }
+   instead of on top of them, in Devanagari and in Latin. It has one weight; the browser thickens it to
+   match the other lyrics. */
+@font-face { font-family: "Slokam Vedic"; src: url("fonts/TiroDevanagariSanskrit-400.woff2") format("woff2"); }
 
 :root {
   --bg-a: 0.55;           /* panel opacity, set from settings */
@@ -95,6 +95,14 @@ body[data-cat="vedam"] .line { font-family: "Slokam Vedic", var(--tamil); line-h
    and fill one after the other, in reading order. */
 /* the whole current line lights up at once */
 .line.active .txt { color: #fff; }
+/* Script setting: the Latin form of each line (prapatti.com's romanised edition) */
+.line .lat { display: none; font-family: var(--latin); font-weight: 600; overflow-wrap: anywhere; }
+body[data-script="lat"] .line .lat { display: inline; }
+body[data-script="lat"] .line:not(.no-lat) .txt { display: none; }
+body[data-script="both"] .line .lat { display: block; font-size: .7em; font-weight: 500; margin-top: .15em; opacity: .85; }
+.line.active .lat { color: #fff; }
+body[data-script="lat"] .line.line-repeat .lat::before { content: "↻ "; color: var(--accent); }
+body[data-cat="vedam"] .line .lat { font-family: "Slokam Vedic", var(--latin); }
 .line.active:hover { background-color: transparent; }
 .line.verse-start { margin-top: calc(14px * var(--scale)); position: relative; }
 .line.verse-start::before {
@@ -156,7 +164,12 @@ body.compact .pill { display: flex; }
   font-size: 12px;
 }
 .sheet-head { display: flex; justify-content: space-between; align-items: center; }
-.sheet label { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sheet label, .sheet .setting-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.seg { display: inline-flex; gap: 0; }
+.seg .pill-btn { border-radius: 0; margin-left: -1px; }
+.seg .pill-btn:first-child { border-radius: 999px 0 0 999px; margin-left: 0; }
+.seg .pill-btn:last-child { border-radius: 0 999px 999px 0; }
+.seg .pill-btn.on { background: var(--accent); color: #1a1620; border-color: var(--accent); }
 .sheet label.check { justify-content: flex-start; }
 .sheet input[type=range] { width: 55%; accent-color: var(--accent); }
 .sheet select { background: #2a2733; color: #fff; border: 1px solid rgba(var(--fg), .2); border-radius: 6px; padding: 2px 4px; }
@@ -275,3 +288,5 @@ body.page-mode .video-box { display: none; }
 .lib-synced.partial { color: #4ea3ff; }                                                     /* blue: partly synced */
 /* ⏮'s preview sits at the left edge, so anchor it there instead of centring */
 .next-preview.prev { left: 0; transform: none; }
+/* Latin script setting: titles and the minimized pill in a Latin font */
+.title:lang(ta-Latn), .title:lang(sa-Latn), body[data-script="lat"] .pill-text { font-family: var(--latin); }

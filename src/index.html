@@ -68,6 +68,8 @@
       <div class="sheet-head"><b>Settings</b><button id="btnSheetClose" class="icon">×</button></div>
       <label>Background <input id="optOpacity" type="range" min="0" max="0.95" step="0.05"></label>
       <label>Text size <input id="optFont" type="range" min="0.8" max="1.6" step="0.05"></label>
+      <div class="setting-row" title="Latin: each line as prapatti.com's romanised edition prints it">Script
+        <span id="scriptSeg" class="seg"><button data-script="orig" class="pill-btn">Original</button><button data-script="lat" class="pill-btn">Latin</button><button data-script="both" class="pill-btn">Both</button></span></div>
       <label>Timing offset <span class="row"><button id="offMinus" class="pill-btn">−0.5s</button><span id="offVal">0.0s</span><button id="offPlus" class="pill-btn">+0.5s</button></span></label>
       <label class="check" title="When off, the next slokam plays after this one ends"><input id="optLoop" type="checkbox"> Loop the recitation <span class="hint">(off: play the next slokam)</span></label>
       <label class="check"><input id="optVideo" type="checkbox"> Show video</label>

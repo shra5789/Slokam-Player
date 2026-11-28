@@ -178,7 +178,12 @@ def dev(t):
     t = re.sub(r'(?<=[kgcjṭḍtdpbmyrvśṣsh])ḷ(?=[kgcjṭḍtdpbmnyrlvśṣsh])', 'l̥', t)
     return sanscript.transliterate(t, sanscript.ISO, sanscript.DEVANAGARI)
 
-out = [{'v': u['v'], 'text': (dev(u['text']) + (' ' + u['end'] if u['end'] else '')).strip()} for u in units]
+LATIN_DANDA = {'।': '|', '॥': '||'}
+def lat(u):
+    # the line as prapatti.com's romanised edition prints it, for the app's Latin-script view
+    t = unicodedata.normalize('NFC', re.sub(r'\s+', ' ', u['text'])).strip()
+    return (t + (' ' + ' '.join(LATIN_DANDA.get(x, x) for x in u['end'].split()) if u['end'] else '')).strip()
+out = [{'v': u['v'], 'text': (dev(u['text']) + (' ' + u['end'] if u['end'] else '')).strip(), 'lat': lat(u)} for u in units]
 if ARGS.one_line:
     one = {int(x) for x in ARGS.one_line.split(',')}
     merged = []
@@ -187,6 +192,8 @@ if ARGS.one_line:
             prev = merged[-1]['text']
             # a word broken across lines ("…कण्टक-" + "व्रात…") joins without the hyphen or a space
             merged[-1]['text'] = prev[:-1] + o['text'] if prev.endswith('-') else prev + ' ' + o['text']
+            pl = merged[-1]['lat']
+            merged[-1]['lat'] = pl[:-1] + o['lat'] if pl.endswith('-') else pl + ' ' + o['lat']
         else:
             merged.append(dict(o))
     out = merged
