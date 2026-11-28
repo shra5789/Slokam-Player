@@ -316,7 +316,7 @@
     $('pillText').textContent = line < 0 ? nativeName(item) : lineIn(T.lines[line], primary(item));
     $('pillText').lang = line < 0 ? nativeLang(item) : langOf(primary(item));
     if (changed && performance.now() > userScrollUntil) {
-      const target = scrollLine ?? line;
+      const target = scrollLine != null ? scrollLine : line;
       scrollToLine(target, Math.abs(target - prevLine) < 14);
     }
   }
@@ -350,7 +350,7 @@
         if (sync.shown !== sync.next) {
           sync.shown = sync.next;
           entry = -2; // force refresh
-          setEntry(sync.next - 1, targetLine ?? undefined);
+          setEntry(sync.next - 1, targetLine != null ? targetLine : undefined);
           lis.forEach((li, k) => li.classList.toggle('target', k === targetLine));
           $('syncNext').textContent = sync.next < seq.length ? 'Next: ' + label(sync.next) : '';
         }
@@ -436,7 +436,7 @@
     const wasMark = sync.marks[sync.next - 1] != null;
     sync.next--; sync.marks.length = sync.next;
     // replay from the start of the last kept line so the redone mark lands after it
-    if (wasMark) player.seek(lastMark() ?? 0);
+    if (wasMark) { const lm = lastMark(); player.seek(lm != null ? lm : 0); }
   }
   function finishSync(discard) {
     if (!sync) return;
@@ -835,7 +835,7 @@
     $('nextPreview').classList.remove('hidden');
   }
   function stepTrack(d, play) {
-    const keepPlaying = play ?? !!(player && player.playing());
+    const keepPlaying = play != null ? play : !!(player && player.playing());
     let next;
     if (S.shuffle && d > 0) {
       next = upNext();
