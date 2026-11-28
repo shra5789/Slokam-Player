@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Slokam Player: a lit agal vilakku (oil lamp) whose flame sends out sound waves.
+       Colours follow the app: lamp-gold #f0b35a on the panel's deep plum-black. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26212f"/>
+      <stop offset="1" stop-color="#0e0c12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="512" cy="430" r="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f0b35a" stop-opacity=".55"/>
+      <stop offset=".45" stop-color="#f0b35a" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#f0b35a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd98f"/>
+      <stop offset=".55" stop-color="#f0b35a"/>
+      <stop offset="1" stop-color="#e0782c"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#ffe2a6"/>
+    </linearGradient>
+    <linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6c877"/>
+      <stop offset="1" stop-color="#c9822b"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="40" y="40" width="944" height="944" rx="210" fill="url(#bg)"/>
+  <rect x="40" y="40" width="944" height="944" rx="210" fill="none" stroke="#f0b35a" stroke-width="22" stroke-opacity=".9"/>
+  <circle cx="512" cy="430" r="330" fill="url(#glow)"/>
+
+  <!-- sound waves on either side of the flame -->
+  <g fill="none" stroke="#f0b35a" stroke-linecap="round">
+    <path d="M 352 290 A 190 190 0 0 0 352 530" stroke-width="30" stroke-opacity=".85"/>
+    <path d="M 672 290 A 190 190 0 0 1 672 530" stroke-width="30" stroke-opacity=".85"/>
+    <path d="M 262 225 A 290 290 0 0 0 262 545" stroke-width="26" stroke-opacity=".45"/>
+    <path d="M 762 225 A 290 290 0 0 1 762 545" stroke-width="26" stroke-opacity=".45"/>
+  </g>
+
+  <!-- flame -->
+  <path d="M 512 178 C 560 262 612 330 612 420 C 612 486 566 532 512 532 C 458 532 412 486 412 420 C 412 330 464 262 512 178 Z" fill="url(#flame)"/>
+  <path d="M 512 318 C 536 362 558 394 558 440 C 558 474 538 500 512 500 C 486 500 466 474 466 440 C 466 394 488 362 512 318 Z" fill="url(#core)"/>
+
+  <!-- the lamp: a shallow bowl with its spout, on a little foot -->
+  <path d="M 268 586 C 268 586 360 566 512 566 C 664 566 744 576 790 556 C 776 640 676 722 512 722 C 348 722 262 650 268 586 Z" fill="url(#lamp)"/>
+  <path d="M 300 590 C 380 606 640 606 760 578" fill="none" stroke="#fff1d0" stroke-opacity=".55" stroke-width="10" stroke-linecap="round"/>
+  <path d="M 452 716 L 572 716 L 600 790 L 424 790 Z" fill="url(#lamp)"/>
+  <rect x="384" y="782" width="256" height="40" rx="20" fill="#c9822b"/>
+</svg>

@@ -223,7 +223,8 @@ function rebuildTrayMenu() {
 }
 
 function createTray() {
-  const img = nativeImage.createFromPath(path.join(__dirname, 'assets', 'icon.png')).resize({ width: 16, height: 16 });
+  // the simplified lamp drawn for small sizes (assets/logo-small.svg), crisp at tray size
+  const img = nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray.png')).resize({ width: 16, height: 16, quality: 'best' });
   tray = new Tray(img);
   tray.setToolTip('Slokam Player  (Ctrl+Alt+L)');
   tray.on('click', toggleVisible);
