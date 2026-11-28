@@ -1,2 +1,6 @@
 node_modules/
 dist/
+tv/dist/
+# Tizen signing material never goes in the repository
+*.p12
+*.wgt

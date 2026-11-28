@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Slokam Player for Samsung Smart TV (Tizen web app). tv/build.js copies this into the staged app. -->
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+        id="http://slokamplayer.app/tv" version="1.0.0" viewmodes="maximized">
+  <tizen:application id="SlkmPlyr01.SlokamPlayer" package="SlkmPlyr01" required_version="5.5"/>
+  <tizen:profile name="tv"/>
+  <name>Slokam Player</name>
+  <description>Śrīvaiṣṇava recitations with synced lyrics, for the TV remote.</description>
+  <content src="index.html"/>
+  <icon src="icon.png"/>
+
+  <feature name="http://tizen.org/feature/screen.size.all"/>
+  <tizen:privilege name="http://tizen.org/privilege/internet"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+
+  <!-- the YouTube embedded player (and the hosts it loads from) and the prapatti.com MP3s -->
+  <access origin="https://www.youtube.com" subdomains="true"/>
+  <access origin="https://youtube.com" subdomains="true"/>
+  <access origin="https://www.youtube-nocookie.com" subdomains="true"/>
+  <access origin="https://ytimg.com" subdomains="true"/>
+  <access origin="https://googlevideo.com" subdomains="true"/>
+  <access origin="https://google.com" subdomains="true"/>
+  <access origin="https://gstatic.com" subdomains="true"/>
+  <access origin="https://googleapis.com" subdomains="true"/>
+  <access origin="https://ggpht.com" subdomains="true"/>
+  <access origin="https://www.prapatti.com" subdomains="true"/>
+  <access origin="https://prapatti.com" subdomains="true"/>
+  <!-- If a TV blocks part of the YouTube player, replace the list above with:
+       <access origin="*" subdomains="true"/> -->
+
+  <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"
+                 encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>

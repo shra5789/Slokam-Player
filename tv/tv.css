@@ -1,0 +1,107 @@
+/* Slokam Player — Samsung Smart TV layer, on top of src/style.css (body.tv.fullscreen).
+   Laid out for a 1920×1080 screen seen from across a room: big type, ~5% safe margins (96 px × 54 px),
+   the dark theme, and the lamp-gold accent for the focus. */
+
+body.tv { background: rgb(14, 12, 18); }
+.tv-hidden { display: none !important; }
+body.tv .panel { border-radius: 0; border: 0; background: rgb(14, 12, 18); }
+
+/* ---------- focus: every control the remote can reach shows it clearly ---------- */
+body.tv :focus { outline: 5px solid var(--accent); outline-offset: 6px; }
+body.tv .icon:focus { background: rgba(240, 179, 90, .22); opacity: 1; outline-offset: 4px; }
+body.tv .pill-btn:focus { outline-offset: 5px; }
+body.tv .seg .pill-btn:focus { position: relative; z-index: 1; }
+body.tv .lib-item:focus { background: rgba(240, 179, 90, .26); outline-offset: 0; }
+body.tv label.check:focus-within, body.tv .sheet label:focus-within { color: var(--accent); }
+body.tv .progress:focus { outline-offset: 10px; border-radius: 12px; }
+body.tv .progress:focus .fill { background: var(--accent); }
+body.tv .progress:focus .knob { transform: scale(1.3); background: var(--accent); }
+
+/* ---------- header ---------- */
+body.tv .bar { padding: 54px 96px 0; min-height: 0; gap: 24px; }
+body.tv .app-name { font-size: 28px; }
+body.tv .app-logo { width: 36px; height: 36px; vertical-align: -7px; margin-right: 12px; }
+body.tv .now { gap: 24px; margin-top: 6px; }
+body.tv .title { font-size: 40px; }
+body.tv .verse-label { font-size: 30px; opacity: .75; }
+body.tv .buttons { gap: 20px; }
+body.tv .bar .icon { min-width: 80px; height: 80px; line-height: 80px; font-size: 38px; border-radius: 18px;
+                     background: rgba(var(--fg), .07); opacity: .9; }
+
+/* ---------- lyrics ---------- */
+body.tv .viewport { padding: 0 96px; }
+body.tv .lines { max-width: 1600px; }
+body.tv .line { font-size: calc(56px * var(--scale)); line-height: 1.35; }
+body.tv[data-cat="vedam"] .line { line-height: 1.6; }
+body.tv .line:hover { background: transparent; }
+body.tv .line.past { color: rgba(var(--fg), .32); }
+body.tv .line { color: rgba(var(--fg), .5); }
+body.tv .line.active .txt, body.tv .line.active .sub { color: #fff; }
+
+/* ---------- seek line and transport buttons ---------- */
+body.tv .tv-seekrow { display: flex; align-items: center; gap: 28px; width: 100%; max-width: 1500px; margin: 0 auto; padding: 8px 96px 0; }
+body.tv .time { font-size: 28px; min-width: 96px; opacity: .8; }
+body.tv .progress { height: 44px; }
+body.tv .progress::before, body.tv .progress .fill { height: 8px; border-radius: 8px; }
+body.tv .progress .knob { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+body.tv .controls, body.tv.fullscreen .controls { max-width: none; justify-content: center; gap: 36px; padding: 18px 96px 54px; }
+body.tv .controls .icon { min-width: 96px; height: 96px; line-height: 96px; font-size: 40px; border-radius: 50%; opacity: .92; }
+body.tv .controls .play { min-width: 116px; height: 116px; line-height: 116px; font-size: 44px; background: rgba(var(--fg), .1); }
+body.tv #btnShuffle { opacity: .55; font-size: 42px; }
+body.tv #btnShuffle.on { opacity: 1; }
+
+/* the controls stay up (no hover on a TV); they fade after a few seconds of playing without a key press */
+body.tv.playing:not(:hover) .bar .buttons, body.tv.playing:not(:hover) .controls, body.tv .tv-seekrow { opacity: 1; transition: opacity .4s; }
+body.tv.tv-idle.playing:not(:hover) .bar .buttons, body.tv.tv-idle.playing:not(:hover) .controls,
+body.tv.tv-idle.playing:not(:hover) .tv-seekrow, body.tv.tv-idle.playing .tv-notice { opacity: 0; }
+
+/* ⏮ / ⏭ previews (shown while focused) */
+body.tv .next-preview { bottom: calc(100% + 18px); padding: 14px 26px; border-radius: 16px; gap: 4px; }
+body.tv .next-preview .next-label { font-size: 20px; }
+body.tv .next-preview .next-name { font-size: 34px; }
+body.tv .next-preview .next-iast { font-size: 24px; }
+
+/* ---------- sheets: Settings and the Library ---------- */
+body.tv .sheet, body.tv.fullscreen .sheet {
+  inset: 54px auto auto 50%; transform: translateX(-50%); width: 1100px; max-height: calc(100% - 108px);
+  padding: 30px 44px 36px; gap: 22px; border-radius: 26px; font-size: 30px;
+  background: rgb(24, 22, 30); border: 2px solid rgba(var(--fg), .14); box-shadow: 0 20px 80px rgba(0, 0, 0, .6);
+}
+body.tv .library, body.tv.fullscreen .library { bottom: 54px; gap: 8px; }
+body.tv .sheet-head b { font-size: 40px; }
+body.tv .sheet-head .icon { min-width: 68px; height: 68px; line-height: 68px; font-size: 38px; border-radius: 16px; opacity: .9; }
+body.tv .sheet label, body.tv .sheet .setting-row { gap: 24px; }
+body.tv .sheet input[type=range] { width: 55%; height: 40px; }
+body.tv .sheet input[type=checkbox] { width: 34px; height: 34px; margin: 0 14px 0 0; accent-color: var(--accent); flex-shrink: 0; }
+body.tv .pill-btn { font-size: 28px; padding: 10px 30px; border-width: 2px; }
+body.tv #scriptSeg .pill-btn { min-width: 92px; font-size: 36px; padding: 6px 18px; }
+body.tv .sheet .hint { font-size: 24px; margin-left: 10px; }
+body.tv .sheet-group { gap: 18px; padding: 24px; border-radius: 16px; }
+body.tv .group-title { font-size: 22px; }
+body.tv .check.sub-option { padding-left: 48px; }
+body.tv .row { gap: 18px; }
+
+body.tv .lib-list { margin: 0 -14px; padding: 0 14px 20px; }
+body.tv .lib-cat { padding: 22px 12px 10px; background: rgb(24, 22, 30); }
+body.tv .lib-cat .lib-main { font-size: 30px; }
+body.tv .lib-cat .lib-sub { font-size: 22px; }
+body.tv .lib-item { gap: 22px; padding: 14px 18px; border-radius: 14px; }
+body.tv .lib-n { min-width: 48px; font-size: 24px; }
+body.tv .lib-names .lib-main { font-size: 34px; }
+body.tv .lib-names .lib-sub { font-size: 24px; }
+body.tv .lib-tag { font-size: 26px; }
+body.tv .lib-synced { font-size: 26px; }
+
+/* ---------- messages ---------- */
+body.tv .toast, body.tv.fullscreen .toast {
+  left: 50%; right: auto; transform: translateX(-50%); width: 1300px; bottom: 260px;
+  padding: 20px 30px; border-radius: 18px; font-size: 28px; line-height: 1.4; text-align: center;
+}
+.tv-notice { transition: opacity .4s;
+  position: absolute; top: 190px; left: 50%; transform: translateX(-50%); width: 1300px; z-index: 3;
+  padding: 18px 30px; border-radius: 18px; font-size: 28px; line-height: 1.4; text-align: center;
+  background: rgba(40, 32, 22, .96); border: 2px solid rgba(240, 179, 90, .55);
+}
+
+/* ---------- the YouTube video, when "Show video" is on ---------- */
+body.tv.show-video .video-box, body.tv.fullscreen.show-video .video-box { top: 170px; right: 96px; width: 480px; height: 270px; border-radius: 14px; }
