@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-  <!-- Slokam Player: a lit agal vilakku (oil lamp) whose flame sends out sound waves.
-       Colours follow the app: lamp-gold #f0b35a on the panel's deep plum-black. -->
+  <!-- Slokam Player: a lit agal vilakku (oil lamp) sending out sound waves, with a (Vaḍakalai) tirumaṇ
+       standing on it: the flame is its śrīcūrṇam. Colours follow the app: lamp-gold #f0b35a on the
+       panel's deep plum-black. -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#26212f"/>
@@ -20,6 +21,10 @@
       <stop offset="0" stop-color="#fffaf0"/>
       <stop offset="1" stop-color="#ffe2a6"/>
     </linearGradient>
+    <linearGradient id="naamam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#f3e2c0"/>
+    </linearGradient>
     <linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#f6c877"/>
       <stop offset="1" stop-color="#c9822b"/>
@@ -32,15 +37,16 @@
 
   <!-- sound waves on either side of the flame -->
   <g fill="none" stroke="#f0b35a" stroke-linecap="round">
-    <path d="M 352 290 A 190 190 0 0 0 352 530" stroke-width="30" stroke-opacity=".85"/>
-    <path d="M 672 290 A 190 190 0 0 1 672 530" stroke-width="30" stroke-opacity=".85"/>
-    <path d="M 262 225 A 290 290 0 0 0 262 545" stroke-width="26" stroke-opacity=".45"/>
-    <path d="M 762 225 A 290 290 0 0 1 762 545" stroke-width="26" stroke-opacity=".45"/>
+    <path d="M 262 225 A 290 290 0 0 0 262 545" stroke-width="28" stroke-opacity=".7"/>
+    <path d="M 762 225 A 290 290 0 0 1 762 545" stroke-width="28" stroke-opacity=".7"/>
   </g>
 
-  <!-- flame -->
-  <path d="M 512 178 C 560 262 612 330 612 420 C 612 486 566 532 512 532 C 458 532 412 486 412 420 C 412 330 464 262 512 178 Z" fill="url(#flame)"/>
-  <path d="M 512 318 C 536 362 558 394 558 440 C 558 474 538 500 512 500 C 486 500 466 474 466 440 C 466 394 488 362 512 318 Z" fill="url(#core)"/>
+  <!-- tirumaṇ: the white U, standing on the lamp -->
+  <path d="M 372 196 L 372 432 C 372 512 428 548 512 548 C 596 548 652 512 652 432 L 652 196" fill="none"
+        stroke="url(#naamam)" stroke-width="50" stroke-linecap="round"/>
+  <!-- the flame, a tall śrīcūrṇam in the middle of it -->
+  <path d="M 512 168 C 542 246 576 318 576 408 C 576 470 548 506 512 506 C 476 506 448 470 448 408 C 448 318 482 246 512 168 Z" fill="url(#flame)"/>
+  <path d="M 512 314 C 528 356 542 388 542 428 C 542 460 530 482 512 482 C 494 482 482 460 482 428 C 482 388 496 356 512 314 Z" fill="url(#core)"/>
 
   <!-- the lamp: a shallow bowl with its spout, on a little foot -->
   <path d="M 268 586 C 268 586 360 566 512 566 C 664 566 744 576 790 556 C 776 640 676 722 512 722 C 348 722 262 650 268 586 Z" fill="url(#lamp)"/>
