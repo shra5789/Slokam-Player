@@ -13,7 +13,7 @@ A player for Śrīvaiṣṇava recitations with Spotify-style synced lyrics: the
 the recording plays. The library (`src/library.js`) has four categories — Divya Prabandhams and Dēśika
 Prabandhams (Tamil), the Dēśika Stōtramālā (Sanskrit) and Vēdam (Sanskrit, with svara marks) — 49 entries
 numbered from the owner's key. On Windows it is a small transparent always-on-top widget with a full-screen
-mode; **on the TV it is the full-screen mode only**, driven by the remote.
+mode; **on the TV it is the full-screen mode only**, driven by the remote, and it never syncs timings.
 
 ## Reuse, don't fork
 
@@ -58,9 +58,12 @@ committed duplicate of `src/`.
   prapatti.com MP3s are the reliable path, and `<audio>` is fine for them (AVPlay is the alternative if
   seeking or codecs misbehave). Check older Tizen versions' Chromium for missing JS features before using
   them.
-- **Sync on the TV**: marking lines with the remote (Enter = mark, Back = finish) is possible but awkward;
-  settings and synced timings live in the TV's own `localStorage`. An import of timings from the Windows
-  app (e.g. a code or file) is a reasonable feature to propose, not to assume.
+- **No syncing on the TV**: the TV app only plays. It never records timings — no Sync / Resume sync /
+  Reset timings buttons, no sync banner, no Mark / Skip, no S / R / Backspace sync keys, no sync toasts, no
+  timing-offset controls. It uses each text's estimated timings (or timings bundled with the app later).
+  Hide these in the TV layer (`tv/`) or with guarded hooks; the Windows app keeps them.
+- **Full screen only**: the TV app opens straight into the full-screen lyrics view. No compact pill, no
+  window or full-screen toggle buttons, no non-full-screen layout.
 
 ## Rules the owner has set (apply to anything you touch)
 
