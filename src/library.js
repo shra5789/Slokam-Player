@@ -2,6 +2,8 @@
 // Numbers follow the user's key. Each work is shown in its original script (Tamil or
 // Devanagari) with IAST underneath. An entry with `text` (a key into window.SLOKAM_TEXTS, from src/texts/)
 // and a recording (`youtube`) is playable; the others are reserved places for later.
+// `tamil`: a Dēśika stōtra's name in Tamil script (from its prapatti.com Tamil edition), for the
+// "Dēśika stōtras in Tamil script" setting.
 window.SLOKAM_LIBRARY = [
   {
     id: 'divya', iast: 'divya prabandaṅgaḷ', native: 'திவ்ய ப்ரபந்தங்கள்', lang: 'ta',
@@ -52,31 +54,31 @@ window.SLOKAM_LIBRARY = [
     ],
   },
   {
-    id: 'desika-stotramala', iast: 'dēśika stōtramālā', native: 'देशिकस्तोत्रमाला', lang: 'sa',
+    id: 'desika-stotramala', iast: 'dēśika stōtramālā', native: 'देशिकस्तोत्रमाला', lang: 'sa', tamil: 'தே₃ஶிகஸ்தோத்ரமாலா',
     items: [
-      { n: 24, iast: 'śrīhayagrīvastōtram', native: 'श्रीहयग्रीवस्तोत्रम्', text: 'hayagrivastotram', youtube: 'URLFjODqAoc' },
-      { n: 25, iast: 'śrīdaśāvatārastōtram', native: 'श्रीदशावतारस्तोत्रम्', text: 'dasavatarastotram', youtube: 'LeH3SspGN5w' },
-      { n: 26, iast: 'śrībhagavaddhyānasōpānam', native: 'श्रीभगवद्ध्यानसोपानम्', text: 'bhagavaddhyanasopanam', audio: 'https://www.prapatti.com/slokas/mp3/bhagavaddhyaanasopaanam.mp3' },
-      { n: 27, iast: 'śrī abhītistavaḥ', native: 'श्री अभीतिस्तवः', text: 'abhitistava', audio: 'audio/abhitistava.mp3', duration: 682 },
+      { n: 24, iast: 'śrīhayagrīvastōtram', native: 'श्रीहयग्रीवस्तोत्रम्', tamil: 'ஶ்ரீஹயக்₃ரீவஸ்தோத்ரம்', text: 'hayagrivastotram', youtube: 'URLFjODqAoc' },
+      { n: 25, iast: 'śrīdaśāvatārastōtram', native: 'श्रीदशावतारस्तोत्रम्', tamil: 'ஶ்ரீத₃ஶாவதாரஸ்தோத்ரம்', text: 'dasavatarastotram', youtube: 'LeH3SspGN5w' },
+      { n: 26, iast: 'śrībhagavaddhyānasōpānam', native: 'श्रीभगवद्ध्यानसोपानम्', tamil: 'ஶ்ரீப₄க₃வத்₃த்₄யாநஸோபாநம்', text: 'bhagavaddhyanasopanam', audio: 'https://www.prapatti.com/slokas/mp3/bhagavaddhyaanasopaanam.mp3' },
+      { n: 27, iast: 'śrī abhītistavaḥ', native: 'श्री अभीतिस्तवः', tamil: 'ஶ்ரீ அபீ₄திஸ்தவ:', text: 'abhitistava', audio: 'audio/abhitistava.mp3', duration: 682 },
       {
         n: 28, iast: 'śrīdayāśatakam', native: 'श्रीदयाशतकम्',
-        text: 'dayasatakam', audio: 'audio/dayasatakam.mp3', duration: 1991,
+        tamil: 'ஶ்ரீத₃யாஶதகம்', text: 'dayasatakam', audio: 'audio/dayasatakam.mp3', duration: 1991,
       },
-      { n: 29, iast: 'śrīvēgāsētustōtram', native: 'श्रीवेगासेतुस्तोत्रम्', text: 'vegasetustotram', audio: 'https://www.prapatti.com/slokas/mp3/vegaasetustotram.mp3' },
-      { n: 30, iast: 'śrī aṣṭabhujāṣṭakam', native: 'श्री अष्टभुजाष्टकम्', text: 'ashtabhujashtakam', audio: 'https://www.prapatti.com/slokas/mp3/ashtabhujaashtakam.mp3' },
-      { n: 31, iast: 'śrīkāmāsikāṣṭakam', native: 'श्रीकामासिकाष्टकम्', text: 'kamasikashtakam', youtube: 'zc0uAzv1B6Q' },
-      { n: 32, iast: 'śrīparamārthastutiḥ', native: 'श्रीपरमार्थस्तुतिः', text: 'paramarthastuti', audio: 'https://www.prapatti.com/slokas/mp3/paramaarthastuti.mp3' },
-      { n: 33, iast: 'śrī accuasaaam', native: 'श्री अच्चुअसअअं', text: 'accuasaam', audio: 'audio/accuasaam.mp3', duration: 1341 },
-      { n: 34, iast: 'śrīmahāvīravaibhavam (raghuvīra gadyam)', native: 'श्रीमहावीरवैभवम् (रघुवीरगद्यम्)', text: 'raghuviragadyam', youtube: 'pz_T4_MqNOc' },
-      { n: 35, iast: 'śrīgōpālaviṃśatiḥ', native: 'श्रीगोपालविंशतिः', text: 'gopalavimsati', youtube: 'EIygjUa4xK8' },
-      { n: 36, iast: 'śrīstutiḥ', native: 'श्रीस्तुतिः', text: 'sristuti', youtube: 'YagbUn2fZWw' },
-      { n: 37, iast: 'śrībhūstutiḥ', native: 'श्रीभूस्तुतिः', text: 'bhustuti', youtube: 'uQf4CMbF0SY' },
-      { n: 38, iast: 'śrīgōdāstutiḥ', native: 'श्रीगोदास्तुतिः', text: 'godastuti', youtube: 'KVdQ-VPiSbY' },
-      { n: 39, iast: 'śrīnyāsadaśakam', native: 'श्रीन्यासदशकम्', text: 'nyasadasakam', audio: 'audio/nyasadasakam.mp3', duration: 160 },
-      { n: 40, iast: 'śrīsudarśanāṣṭakam', native: 'श्रीसुदर्शनाष्टकम्', text: 'sudarsanashtakam', youtube: 'rpd2QJeV54Y' },
-      { n: 41, iast: 'śrī ṣōḍaśāyudhastōtram', native: 'श्री षोडशायुधस्तोत्रम्', text: 'shodasayudhastotram', youtube: 'VFGj8Y-oTDU' },
-      { n: 42, iast: 'śrīgaruḍadaṇḍakaḥ', native: 'श्रीगरुडदण्डकः', text: 'garudadandakam', youtube: '_x3C37kE9Ug' },
-      { n: 43, iast: 'śrīdēśikamaṅgaḷam', native: 'श्रीदेशिकमङ्गळम्', text: 'desikamangalam', youtube: '0zhWV393WPY' },
+      { n: 29, iast: 'śrīvēgāsētustōtram', native: 'श्रीवेगासेतुस्तोत्रम्', tamil: 'ஶ்ரீவேகா₃ஸேதுஸ்தோத்ரம்', text: 'vegasetustotram', audio: 'https://www.prapatti.com/slokas/mp3/vegaasetustotram.mp3' },
+      { n: 30, iast: 'śrī aṣṭabhujāṣṭakam', native: 'श्री अष्टभुजाष्टकम्', tamil: 'ஶ்ரீ அஷ்டபு₄ஜாஷ்டகம்', text: 'ashtabhujashtakam', audio: 'https://www.prapatti.com/slokas/mp3/ashtabhujaashtakam.mp3' },
+      { n: 31, iast: 'śrīkāmāsikāṣṭakam', native: 'श्रीकामासिकाष्टकम्', tamil: 'ஶ்ரீகாமாஸிகாஷ்டகம்', text: 'kamasikashtakam', youtube: 'zc0uAzv1B6Q' },
+      { n: 32, iast: 'śrīparamārthastutiḥ', native: 'श्रीपरमार्थस्तुतिः', tamil: 'ஶ்ரீபரமார்த₂ஸ்துதி:', text: 'paramarthastuti', audio: 'https://www.prapatti.com/slokas/mp3/paramaarthastuti.mp3' },
+      { n: 33, iast: 'śrī accuasaaam', native: 'श्री अच्चुअसअअं', tamil: 'ஶ்ரீ அச்சுஅஸஅஅம்', text: 'accuasaam', audio: 'audio/accuasaam.mp3', duration: 1341 },
+      { n: 34, iast: 'śrīmahāvīravaibhavam (raghuvīra gadyam)', native: 'श्रीमहावीरवैभवम् (रघुवीरगद्यम्)', tamil: 'ஶ்ரீமஹாவீரவைப₄வம் (ரகு₄வீரக₃த்₃யம்)', text: 'raghuviragadyam', youtube: 'pz_T4_MqNOc' },
+      { n: 35, iast: 'śrīgōpālaviṃśatiḥ', native: 'श्रीगोपालविंशतिः', tamil: 'ஶ்ரீகோ₃பாலவிம்ஶதி:', text: 'gopalavimsati', youtube: 'EIygjUa4xK8' },
+      { n: 36, iast: 'śrīstutiḥ', native: 'श्रीस्तुतिः', tamil: 'ஶ்ரீஸ்துதி:', text: 'sristuti', youtube: 'YagbUn2fZWw' },
+      { n: 37, iast: 'śrībhūstutiḥ', native: 'श्रीभूस्तुतिः', tamil: 'ஶ்ரீபூ₄ஸ்துதி:', text: 'bhustuti', youtube: 'uQf4CMbF0SY' },
+      { n: 38, iast: 'śrīgōdāstutiḥ', native: 'श्रीगोदास्तुतिः', tamil: 'ஶ்ரீகோ₃தா₃ஸ்துதி:', text: 'godastuti', youtube: 'KVdQ-VPiSbY' },
+      { n: 39, iast: 'śrīnyāsadaśakam', native: 'श्रीन्यासदशकम्', tamil: 'ஶ்ரீந்யாஸத₃ஶகம்', text: 'nyasadasakam', audio: 'audio/nyasadasakam.mp3', duration: 160 },
+      { n: 40, iast: 'śrīsudarśanāṣṭakam', native: 'श्रीसुदर्शनाष्टकम्', tamil: 'ஶ்ரீஸுத₃ர்ஶநாஷ்டகம்', text: 'sudarsanashtakam', youtube: 'rpd2QJeV54Y' },
+      { n: 41, iast: 'śrī ṣōḍaśāyudhastōtram', native: 'श्री षोडशायुधस्तोत्रम्', tamil: 'ஶ்ரீ ஷோட₃ஶாயுத₄ஸ்தோத்ரம்', text: 'shodasayudhastotram', youtube: 'VFGj8Y-oTDU' },
+      { n: 42, iast: 'śrīgaruḍadaṇḍakaḥ', native: 'श्रीगरुडदण्डकः', tamil: 'ஶ்ரீக₃ருட₃த₃ண்ட₃க:', text: 'garudadandakam', youtube: '_x3C37kE9Ug' },
+      { n: 43, iast: 'śrīdēśikamaṅgaḷam', native: 'श्रीदेशिकमङ्गळम्', tamil: 'ஶ்ரீதே₃ஶிகமங்க₃ளம்', text: 'desikamangalam', youtube: '0zhWV393WPY' },
     ],
   },
   {

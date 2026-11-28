@@ -40,11 +40,13 @@ def pdf_lines(path):
                     out.append(t)
     return out
 
-def words(lines):
+def words(lines, drop_repeated=True):
     """The romanised text as one stream of words, in reading order, without page furniture, verse
     numbers or the ⋆ ‡ marks. Each word remembers the line break after it is irrelevant: the Tamil
     lines decide where lines end."""
-    common = {l for l, n in Counter(lines).items() if n >= 3 and 'Á' not in l and '⋆' not in l}
+    # page headings: lines printed on (nearly) every page. A caller whose text has refrains printed on a
+    # line of their own (Sudarśanāṣṭakam's ஜய ஜய ஶ்ரீஸுத₃ர்ஶந) drops its headings itself instead.
+    common = {l for l, n in Counter(lines).items() if n >= 3 and 'Á' not in l and '⋆' not in l} if drop_repeated else set()
     junk = re.compile(r'^(\d+|www\.prapatti\.com|Sunder Kidāmbi|This document has been prepared by|with the blessings of|'
                       r'His Holiness .*|.*\. \. \. .*)$')
     out = []

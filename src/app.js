@@ -14,7 +14,18 @@
     'उत्तरकाण्डम्': 'uttarakāṇḍam',
   };
   const latinOnly = () => S.script === 'lat';
-  const L = (w) => (latinOnly() && w ? LATIN[w] || w : w);
+  // "Dēśika stōtras in Tamil script": the stōtras' Devanagari shown in Tamil letters instead (each line's
+  // "tam", from prapatti.com's Tamil edition). Labels then read:
+  const TAMIL = {
+    'तनियन्': 'தனியன்', 'श्लोकः': 'ஶ்லோக:', 'पुनः': 'புந:', 'बालकाण्डम्': 'பா₃லகாண்ட₃ம்', 'अयोध्याकाण्डम्': 'அயோத்₄யாகாண்ட₃ம்',
+    'आरण्यकाण्डम्': 'ஆரண்யகாண்ட₃ம்', 'किष्किन्धाकाण्डम्': 'கிஷ்கிந்தா₄காண்ட₃ம்', 'सुन्दरकाण्डम्': 'ஸுந்த₃ரகாண்ட₃ம்',
+    'युद्धकाण्डम्': 'யுத்₃த₄காண்ட₃ம்', 'उत्तरकाण्डम्': 'உத்தரகாண்ட₃ம்',
+  };
+  const inTamil = (it) => !!S.stotraTamil && !!it && (it.cat.id === 'desika-stotramala');
+  // a work's (or category's) name in the script it's shown in
+  const nativeName = (it) => (inTamil(it) && it.tamil) || it.native;
+  const nativeLang = (it) => (inTamil(it) && it.tamil ? 'sa-Taml' : it.lang);
+  const L = (w) => (!w ? w : latinOnly() ? LATIN[w] || w : inTamil(item) ? TAMIL[w] || w : w);
 
   // every library entry, with its category's language, by id (the text key, or "n<number>")
   const ITEMS = {};
@@ -228,7 +239,10 @@
       // inline span: when a line wraps, its background is laid out as one continuous strip,
       // so the highlight sweeps the first row and then the second instead of both at once
       if (ln.rep) li.classList.add('line-repeat'); // shown with ↻ in front
-      const txt = document.createElement('span'); txt.className = 'txt'; txt.textContent = ln.text;
+      const txt = document.createElement('span'); txt.className = 'txt';
+      const tam = inTamil(item) && ln.tam;
+      txt.textContent = tam || ln.text;
+      if (tam) txt.lang = 'sa-Taml';
       li.appendChild(txt);
       // the same line in Latin script (shown, or shown underneath, per the Script setting)
       if (ln.lat) {
@@ -280,8 +294,8 @@
       li.classList.toggle('past', k < line); // on a repeat, lines after it light back up as "to come"
     });
     $('verseLabel').textContent = label(e);
-    $('pillText').textContent = line < 0 ? (latinOnly() ? item.iast : item.native)
-      : (latinOnly() && T.lines[line].lat) || T.lines[line].text;
+    $('pillText').textContent = line < 0 ? (latinOnly() ? item.iast : nativeName(item))
+      : (latinOnly() && T.lines[line].lat) || (inTamil(item) && T.lines[line].tam) || T.lines[line].text;
     if (changed && performance.now() > userScrollUntil) {
       const target = scrollLine ?? line;
       scrollToLine(target, Math.abs(target - prevLine) < 14);
@@ -457,9 +471,9 @@
     document.body.dataset.script = mode;
     document.querySelectorAll('#scriptSeg button').forEach((b) => b.classList.toggle('on', b.dataset.script === mode));
     if (!item) return;
-    $('slokaTitle').textContent = latinOnly() ? item.iast : item.native;
-    $('slokaTitle').lang = latinOnly() ? item.lang + '-Latn' : item.lang;
-    $('slokaTitle').title = latinOnly() ? item.native : item.iast;
+    $('slokaTitle').textContent = latinOnly() ? item.iast : nativeName(item);
+    $('slokaTitle').lang = latinOnly() ? item.lang + '-Latn' : nativeLang(item);
+    $('slokaTitle').title = latinOnly() ? nativeName(item) : item.iast;
     if (lis.length) markVerses();
   }
   function updateTimingNote() {
@@ -473,7 +487,7 @@
   }
   function openSheet() {
     closeLibrary();
-    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam; $('optMargazhi').checked = !!S.margazhi;
+    $('optOpacity').value = S.opacity; $('optFont').value = S.font; $('optVideo').checked = !!S.video; $('optLoop').checked = !!S.loop; $('optAnadhyayanam').checked = !!S.anadhyayanam; $('optStotraTamil').checked = !!S.stotraTamil; $('optMargazhi').checked = !!S.margazhi;
     $('margazhiRow').classList.toggle('hidden', !S.anadhyayanam);
     updateTimingNote();
     $('sheet').classList.remove('hidden');
@@ -491,22 +505,22 @@
       const h = document.createElement('div');
       h.className = 'lib-cat';
       // original script (Tamil or Devanagari) first, IAST under it
-      const [main, sub] = [cat.native, cat.iast];
+      const [main, sub] = [(S.stotraTamil && cat.id === 'desika-stotramala' && cat.tamil) || cat.native, cat.iast];
       h.innerHTML = `<span class="lib-main"></span><span class="lib-sub"></span>`;
       h.children[0].textContent = main; h.children[1].textContent = sub;
-      h.children[0].lang = cat.lang;
+      h.children[0].lang = S.stotraTamil && cat.id === 'desika-stotramala' && cat.tamil ? 'sa-Taml' : cat.lang;
       sec.appendChild(h);
       cat.items.forEach((it) => {
         const b = document.createElement('button');
         b.className = 'lib-item' + (it.available ? '' : ' soon') + (isOff(it) ? ' off' : '') + (item && it.id === item.id ? ' current' : '');
         b.disabled = !canPlay(it);
         if (isOff(it)) b.title = 'Anadhyayanam mode is on (⚙ Settings)';
-        const [m, s] = [it.native, it.iast];
+        const [m, s] = [nativeName(it), it.iast];
         b.innerHTML = '<span class="lib-n"></span><span class="lib-names"><span class="lib-main"></span><span class="lib-sub"></span></span><span class="lib-tag"></span>';
         b.querySelector('.lib-n').textContent = it.n;
         b.querySelector('.lib-main').textContent = m;
         b.querySelector('.lib-sub').textContent = s;
-        b.querySelector('.lib-main').lang = cat.lang;
+        b.querySelector('.lib-main').lang = nativeLang(it);
         b.querySelector('.lib-tag').textContent = !it.available ? 'soon' : isOff(it) ? '' : (item && it.id === item.id ? '♪' : '');
         const st = isSynced(it);
         if (st) {
@@ -573,6 +587,11 @@
     $('optOpacity').oninput = (e) => { save({ opacity: +e.target.value }); applyLook(); };
     $('optFont').oninput = (e) => { save({ font: +e.target.value }); applyLook(); };
     $('optVideo').onchange = (e) => { save({ video: e.target.checked }); applyLook(); };
+    $('optStotraTamil').onchange = (e) => {
+      save({ stotraTamil: e.target.checked });
+      if (item && item.cat.id === 'desika-stotramala') { buildLines(); entry = -2; activeLine = -2; }
+      applyLook();
+    };
     document.querySelectorAll('#scriptSeg button').forEach((b) => {
       b.onclick = () => { save({ script: b.dataset.script }); applyLook(); };
     });
@@ -770,14 +789,14 @@
       label = 'Previous'; it = step(-1);
     }
     $('prevLabel').textContent = label;
-    $('prevName').textContent = it.native; $('prevName').lang = it.lang;
+    $('prevName').textContent = nativeName(it); $('prevName').lang = nativeLang(it);
     $('prevIast').textContent = it.iast;
     $('prevPreview').classList.remove('hidden');
   }
   function showNextPreview() {
     const n = upNext();
-    $('nextName').textContent = n.native;
-    $('nextName').lang = n.lang;
+    $('nextName').textContent = nativeName(n);
+    $('nextName').lang = nativeLang(n);
     $('nextIast').textContent = n.iast;
     $('nextLabel').textContent = S.shuffle ? 'Up next (shuffle)' : 'Up next';
     $('nextPreview').classList.remove('hidden');

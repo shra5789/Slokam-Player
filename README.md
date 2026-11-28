@@ -201,6 +201,9 @@ The text generators in `tools/` apply these rules when they build each slokam's 
   romanised ("english") edition of the same work. Each line's Latin is its `lat` field:
   `build_sanskrit_stotra.py` and `build_vedam.py` write it; `tools/add_latin.py` copies it into a text that's
   been edited by hand, and `tools/add_latin_tamil.py` finds it for a Tamil text in the romanised PDF.
+- **Dēśika stōtras in Tamil script** (⚙, under Script): the 20 stōtras in Tamil letters instead of Devanagari,
+  from prapatti.com's Tamil editions (`tam` on each line, added by `tools/add_tamil_script.py`; names in
+  `library.js` as `tamil`).
 
 ### Adding a slokam
 
